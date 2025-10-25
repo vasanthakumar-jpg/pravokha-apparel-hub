@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,10 +8,12 @@ import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft } from 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
 
 export default function ProductDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const product = products.find((p) => p.slug === slug);
   const { addToCart } = useCart();
 
@@ -31,7 +33,11 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("Please select a size");
+      toast({
+        title: "Please select a size",
+        description: "You need to select a size before adding to cart",
+        variant: "destructive",
+      });
       return;
     }
     
@@ -47,6 +53,20 @@ export default function ProductDetail() {
         image: selectedVariant.images[mainImage],
       });
     }
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      toast({
+        title: "Please select a size",
+        description: "You need to select a size before proceeding",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    handleAddToCart();
+    navigate("/checkout");
   };
 
   const relatedProducts = products
@@ -208,7 +228,11 @@ export default function ProductDetail() {
               >
                 Add to Cart
               </Button>
-              <Button size="lg" className="flex-1 bg-secondary hover:bg-secondary/90">
+              <Button 
+                size="lg" 
+                className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                onClick={handleBuyNow}
+              >
                 Buy Now
               </Button>
               <Button size="lg" variant="outline">

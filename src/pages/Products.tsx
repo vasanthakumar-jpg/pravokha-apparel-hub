@@ -13,14 +13,18 @@ import { Slider } from "@/components/ui/slider";
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState("featured");
-  const [priceRange, setPriceRange] = useState([0, 2000]);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [tempPriceRange, setTempPriceRange] = useState([0, 5000]);
+  const [tempCategories, setTempCategories] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const categoryParam = searchParams.get("category");
 
   useEffect(() => {
     if (categoryParam && categoryParam !== "all") {
       setSelectedCategories([categoryParam]);
+      setTempCategories([categoryParam]);
     }
   }, [categoryParam]);
 
@@ -47,27 +51,45 @@ export default function Products() {
     filteredProducts.sort((a, b) => b.rating - a.rating);
   }
 
-  const toggleCategory = (categoryId: string) => {
-    setSelectedCategories((prev) =>
+  const toggleTempCategory = (categoryId: string) => {
+    setTempCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((c) => c !== categoryId)
         : [...prev, categoryId]
     );
   };
 
-  const FilterContent = () => (
+  const applyFilters = () => {
+    setSelectedCategories(tempCategories);
+    setPriceRange(tempPriceRange);
+    setIsFilterOpen(false);
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setTempCategories([]);
+    setPriceRange([0, 5000]);
+    setTempPriceRange([0, 5000]);
+  };
+
+  const FilterContent = ({ isDesktop = false }: { isDesktop?: boolean }) => (
     <div className="space-y-6">
       <div>
-        <h3 className="font-semibold mb-3">Categories</h3>
-        <div className="space-y-2">
+        <h3 className="font-semibold mb-3 text-base">Categories</h3>
+        <div className="space-y-3">
           {categories.filter(c => c.id !== "all").map((category) => (
             <div key={category.id} className="flex items-center space-x-2">
               <Checkbox
-                id={category.id}
-                checked={selectedCategories.includes(category.id)}
-                onCheckedChange={() => toggleCategory(category.id)}
+                id={`${isDesktop ? 'desktop-' : 'mobile-'}${category.id}`}
+                checked={isDesktop ? selectedCategories.includes(category.id) : tempCategories.includes(category.id)}
+                onCheckedChange={() => isDesktop ? setSelectedCategories(prev => 
+                  prev.includes(category.id) ? prev.filter(c => c !== category.id) : [...prev, category.id]
+                ) : toggleTempCategory(category.id)}
               />
-              <Label htmlFor={category.id} className="text-sm cursor-pointer">
+              <Label 
+                htmlFor={`${isDesktop ? 'desktop-' : 'mobile-'}${category.id}`} 
+                className="text-sm cursor-pointer font-medium"
+              >
                 {category.name}
               </Label>
             </div>
@@ -76,22 +98,33 @@ export default function Products() {
       </div>
 
       <div>
-        <h3 className="font-semibold mb-3">Price Range</h3>
+        <h3 className="font-semibold mb-3 text-base">Price Range</h3>
         <div className="space-y-4">
           <Slider
             min={0}
-            max={2000}
+            max={5000}
             step={100}
-            value={priceRange}
-            onValueChange={setPriceRange}
+            value={isDesktop ? priceRange : tempPriceRange}
+            onValueChange={isDesktop ? setPriceRange : setTempPriceRange}
             className="w-full"
           />
-          <div className="flex items-center justify-between text-sm">
-            <span>₹{priceRange[0]}</span>
-            <span>₹{priceRange[1]}</span>
+          <div className="flex items-center justify-between text-sm font-medium">
+            <span>₹{isDesktop ? priceRange[0] : tempPriceRange[0]}</span>
+            <span>₹{isDesktop ? priceRange[1] : tempPriceRange[1]}</span>
           </div>
         </div>
       </div>
+
+      {!isDesktop && (
+        <div className="flex gap-2 pt-4">
+          <Button variant="outline" onClick={clearFilters} className="flex-1">
+            Clear All
+          </Button>
+          <Button onClick={applyFilters} className="flex-1 bg-primary hover:bg-primary-hover">
+            Apply Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 
@@ -122,18 +155,18 @@ export default function Products() {
             </Select>
 
             {/* Mobile Filter */}
-            <Sheet>
+            <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="lg:hidden">
                   <Filter className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left">
+              <SheetContent side="left" className="w-80">
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6">
-                  <FilterContent />
+                  <FilterContent isDesktop={false} />
                 </div>
               </SheetContent>
             </Sheet>
@@ -145,11 +178,16 @@ export default function Products() {
           {/* Desktop Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-20 space-y-6 p-4 border rounded-lg bg-card">
-              <h2 className="font-semibold text-lg flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Filters
-              </h2>
-              <FilterContent />
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold text-lg flex items-center gap-2">
+                  <Filter className="h-5 w-5" />
+                  Filters
+                </h2>
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs">
+                  Clear
+                </Button>
+              </div>
+              <FilterContent isDesktop={true} />
             </div>
           </aside>
 

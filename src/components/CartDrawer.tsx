@@ -137,9 +137,11 @@ export default function CartDrawer() {
               </div>
 
               <div className="space-y-2">
-                <Button className="w-full bg-primary hover:bg-primary-hover" size="lg">
-                  Proceed to Checkout
-                </Button>
+                <Link to="/checkout" className="block" onClick={() => setIsCartOpen(false)}>
+                  <Button className="w-full bg-primary hover:bg-primary-hover" size="lg">
+                    Proceed to Checkout
+                  </Button>
+                </Link>
                 <Button
                   variant="outline"
                   className="w-full"
