@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,8 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, cartTotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState("upi");
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +25,25 @@ export default function Checkout() {
     city: "",
     pincode: "",
   });
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to continue with checkout",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+    setUser(user);
+    setLoading(false);
+  };
 
   const shipping = 99;
   const tax = Math.round(cartTotal * 0.18);
@@ -53,6 +75,14 @@ export default function Checkout() {
     clearCart();
     setTimeout(() => navigate("/"), 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="container py-16 text-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

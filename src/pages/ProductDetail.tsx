@@ -19,7 +19,7 @@ export default function ProductDetail() {
 
   const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
   const [selectedSize, setSelectedSize] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const [mainImage, setMainImage] = useState(0);
 
   if (!product || !selectedVariant) {
@@ -36,6 +36,15 @@ export default function ProductDetail() {
       toast({
         title: "Please select a size",
         description: "You need to select a size before adding to cart",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (quantity === 0) {
+      toast({
+        title: "Please select quantity",
+        description: "Quantity must be at least 1",
         variant: "destructive",
       });
       return;
@@ -76,10 +85,10 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="container py-6">
-        <Link to="/products">
+        <Link to="/">
           <Button variant="ghost" className="mb-4">
             <ChevronLeft className="h-4 w-4 mr-2" />
-            Back to Products
+            Back to Home
           </Button>
         </Link>
 
@@ -178,9 +187,11 @@ export default function ProductDetail() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <Label className="text-sm font-semibold">Size</Label>
-                <Button variant="link" size="sm" className="h-auto p-0">
-                  Size Guide
-                </Button>
+                <Link to="/size-guide">
+                  <Button variant="link" size="sm" className="h-auto p-0">
+                    Size Guide
+                  </Button>
+                </Link>
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {selectedVariant.sizes.map((sizeOption) => (
@@ -204,7 +215,7 @@ export default function ProductDetail() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  onClick={() => setQuantity(Math.max(0, quantity - 1))}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>

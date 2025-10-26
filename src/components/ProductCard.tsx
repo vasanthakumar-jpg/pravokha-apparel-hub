@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="group overflow-hidden border-border hover:shadow-lg transition-all duration-300 animate-fade-in">
+    <Card className="group overflow-hidden border-border hover:border-primary hover:shadow-lg transition-all duration-300 animate-fade-in">
       <Link to={`/product/${product.slug}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
@@ -59,47 +59,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Favorite Icon - Always Visible */}
+          <div className="absolute top-2 right-2">
             <Button
               size="icon"
               variant="secondary"
-              className="h-9 w-9 rounded-full"
+              className="h-9 w-9 rounded-full shadow-md"
               onClick={(e) => {
                 e.preventDefault();
               }}
             >
               <Heart className="h-4 w-4" />
             </Button>
-          </div>
-
-          {/* Quick Add Button */}
-          <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-            <Button
-              className="w-full bg-primary hover:bg-primary-hover"
-              size="sm"
-              onClick={handleQuickAdd}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Quick Add
-            </Button>
-          </div>
-
-          {/* Color Variants Preview */}
-          <div className="absolute bottom-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {product.variants.slice(0, 4).map((variant) => (
-              <div
-                key={variant.id}
-                className="h-6 w-6 rounded-full border-2 border-background shadow-sm"
-                style={{ backgroundColor: variant.colorHex }}
-                title={variant.colorName}
-              />
-            ))}
-            {product.variants.length > 4 && (
-              <div className="h-6 w-6 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs">
-                +{product.variants.length - 4}
-              </div>
-            )}
           </div>
         </div>
       </Link>

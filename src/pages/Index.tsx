@@ -113,7 +113,7 @@ export default function Index() {
                 <Button size="lg" className="bg-background text-foreground hover:bg-background/90">
                   Shop Now
                 </Button>
-                <Button size="lg" variant="outline" className="border-background text-background hover:bg-background/10">
+                <Button size="lg" variant="outline" className="border-background bg-background/10 text-background hover:bg-background/20">
                   Learn More
                 </Button>
               </div>
