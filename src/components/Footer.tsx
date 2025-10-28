@@ -1,9 +1,66 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const emailSchema = z.string().email("Invalid email address");
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      emailSchema.parse(email);
+    } catch (error) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from("newsletter_subscriptions")
+        .insert([{ email: email.trim().toLowerCase() }]);
+
+      if (error) {
+        if (error.code === "23505") {
+          toast({
+            title: "Already subscribed",
+            description: "This email is already subscribed to our newsletter.",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Subscribed successfully!",
+          description: "Thank you for subscribing to our newsletter.",
+        });
+        setEmail("");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Subscription failed",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-card border-t mt-auto">
       <div className="container py-12">
@@ -17,14 +74,25 @@ export default function Footer() {
               Premium fashion for the modern lifestyle. Quality fabrics, trendy designs, and unbeatable comfort.
             </p>
             <div className="flex gap-2">
-              <Button size="icon" variant="ghost" className="h-9 w-9">
-                <Facebook className="h-4 w-4" />
+              <Button size="icon" variant="ghost" className="h-9 w-9" asChild>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <Facebook className="h-4 w-4" />
+                </a>
               </Button>
-              <Button size="icon" variant="ghost" className="h-9 w-9">
-                <Instagram className="h-4 w-4" />
+              <Button size="icon" variant="ghost" className="h-9 w-9" asChild>
+                <a href="https://www.instagram.com/vasanth_vasu_vv/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <Instagram className="h-4 w-4" />
+                </a>
               </Button>
-              <Button size="icon" variant="ghost" className="h-9 w-9">
-                <Twitter className="h-4 w-4" />
+              <Button size="icon" variant="ghost" className="h-9 w-9" asChild>
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                  <Youtube className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button size="icon" variant="ghost" className="h-9 w-9" asChild>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                  <Twitter className="h-4 w-4" />
+                </a>
               </Button>
             </div>
           </div>
@@ -61,24 +129,29 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/shipping-returns" className="text-muted-foreground hover:text-primary transition-colors">
                   Shipping & Returns
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/size-guide" className="text-muted-foreground hover:text-primary transition-colors">
                   Size Guide
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="text-muted-foreground hover:text-primary transition-colors">
+                  Support Center
+                </Link>
               </li>
             </ul>
           </div>
@@ -89,16 +162,24 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground mb-4">
               Subscribe to get special offers and updates
             </p>
-            <div className="flex gap-2">
+            <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
               <Input
                 type="email"
                 placeholder="Your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex-1"
+                required
+                disabled={isSubmitting}
               />
-              <Button className="bg-primary hover:bg-primary-hover">
+              <Button 
+                type="submit" 
+                className="bg-primary hover:bg-primary-hover"
+                disabled={isSubmitting}
+              >
                 <Mail className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-success"></span>

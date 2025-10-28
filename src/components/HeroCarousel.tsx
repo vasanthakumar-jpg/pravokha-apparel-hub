@@ -28,6 +28,13 @@ const slides = [
     cta: "Shop Shorts",
     link: "/products?category=shorts",
   },
+  {
+    image: hero1,
+    title: "Bulk Orders Available",
+    description: "Special pricing for bulk purchases. Contact us for wholesale rates.",
+    cta: "Contact for Bulk Orders",
+    link: "/contact",
+  },
 ];
 
 export default function HeroCarousel() {

@@ -164,9 +164,11 @@ export default function Contact() {
                   <div>
                     <p className="font-medium">Address</p>
                     <p className="text-muted-foreground">
-                      Mumbai, Maharashtra
+                      8, Bhavani Nagar 1st Street,
                       <br />
-                      India
+                      Pappanayakkan Palayam,
+                      <br />
+                      Tirupur
                     </p>
                   </div>
                 </div>

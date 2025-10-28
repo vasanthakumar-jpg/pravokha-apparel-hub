@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
-import { Heart, ShoppingCart, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Product } from "@/data/products";
-import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/contexts/CartContext";
+import { Product } from "@/data/products";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +14,75 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    checkWishlistStatus();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      checkWishlistStatus();
+    });
+
+    return () => subscription.unsubscribe();
+  }, [product.id]);
+
+  const checkWishlistStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setIsInWishlist(false);
+      return;
+    }
+
+    const { data } = await supabase
+      .from("wishlist")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("product_id", product.id)
+      .single();
+
+    setIsInWishlist(!!data);
+  };
+  const handleToggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
+    if (isInWishlist) {
+      const { error } = await supabase
+        .from("wishlist")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("product_id", product.id);
+
+      if (!error) {
+        setIsInWishlist(false);
+        toast({
+          title: "Removed from wishlist",
+          description: `${product.title} removed from your wishlist`,
+        });
+      }
+    } else {
+      const { error } = await supabase
+        .from("wishlist")
+        .insert([{ user_id: user.id, product_id: product.id }]);
+
+      if (!error) {
+        setIsInWishlist(true);
+        toast({
+          title: "Added to wishlist",
+          description: `${product.title} added to your wishlist`,
+        });
+      }
+    }
+  };
+
   const firstVariant = product.variants[0];
   const hasDiscount = product.discountPrice && product.discountPrice < product.price;
   const discountPercent = hasDiscount
@@ -60,18 +131,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Favorite Icon - Always Visible */}
-          <div className="absolute top-2 right-2">
-            <Button
-              size="icon"
-              variant="secondary"
-              className="h-9 w-9 rounded-full shadow-md"
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
-          </div>
+          <button
+            onClick={handleToggleWishlist}
+            className="absolute top-3 right-3 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors z-10"
+          >
+            <Heart className={`h-5 w-5 transition-colors ${isInWishlist ? 'fill-primary text-primary' : 'text-muted-foreground hover:text-primary'}`} />
+          </button>
         </div>
       </Link>
 
