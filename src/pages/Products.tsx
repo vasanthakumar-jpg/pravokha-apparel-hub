@@ -20,6 +20,7 @@ export default function Products() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const categoryParam = searchParams.get("category");
+  const searchQuery = searchParams.get("search");
 
   useEffect(() => {
     if (categoryParam && categoryParam !== "all") {
@@ -29,6 +30,16 @@ export default function Products() {
   }, [categoryParam]);
 
   let filteredProducts = [...products];
+
+  // Filter by search query
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    filteredProducts = filteredProducts.filter((p) =>
+      p.title.toLowerCase().includes(query) ||
+      p.description.toLowerCase().includes(query) ||
+      p.category.toLowerCase().includes(query)
+    );
+  }
 
   // Filter by category
   if (selectedCategories.length > 0) {

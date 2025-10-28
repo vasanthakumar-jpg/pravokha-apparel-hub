@@ -10,6 +10,16 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, Smartphone, Building2, QrCode } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const checkoutSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
+  email: z.string().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Phone must be a valid 10-digit Indian number"),
+  address: z.string().min(10, "Address must be at least 10 characters").max(500, "Address must be less than 500 characters"),
+  city: z.string().min(2, "City must be at least 2 characters").max(100, "City must be less than 100 characters"),
+  pincode: z.string().regex(/^[1-9]\d{5}$/, "Pincode must be a valid 6-digit Indian pincode"),
+});
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -56,17 +66,21 @@ export default function Checkout() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
-      toast({
-        title: "Missing information",
-        description: "Please fill all required fields",
-        variant: "destructive",
-      });
-      return;
+    // Comprehensive validation with zod
+    try {
+      checkoutSchema.parse(formData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
-    // Simulate payment processing
+    // Simulate payment processing (TODO: Integrate Razorpay)
     toast({
       title: "Order placed successfully! 🎉",
       description: `Your order of ₹${total} has been confirmed. Order ID: #${Date.now().toString().slice(-8)}`,

@@ -112,6 +112,19 @@ export default function Navbar() {
                     </Button>
                   </Link>
                   
+                  {/* Mobile Wishlist */}
+                  <Link to="/wishlist" onClick={closeMobileMenu}>
+                    <Button variant="ghost" className="w-full justify-start hover:text-primary">
+                      <Heart className="h-4 w-4 mr-2" />
+                      Wishlist
+                    </Button>
+                  </Link>
+                  
+                  {/* Mobile Theme Toggle */}
+                  <div className="px-3 py-2">
+                    <ThemeToggle className="w-full" />
+                  </div>
+                  
                   {/* Mobile Login/Logout */}
                   {user ? (
                     <Button 
