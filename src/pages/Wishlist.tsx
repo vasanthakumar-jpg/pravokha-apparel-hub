@@ -120,9 +120,39 @@ export default function Wishlist() {
     );
   }
 
+  const clearAllWishlist = async () => {
+    try {
+      const { error } = await supabase
+        .from("wishlist")
+        .delete()
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      setWishlistItems([]);
+      toast({
+        title: "Wishlist cleared",
+        description: "All items have been removed from your wishlist",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-8">My Wishlist ({wishlistItems.length})</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold">My Wishlist ({wishlistItems.length})</h1>
+        {wishlistItems.length > 0 && (
+          <Button variant="destructive" onClick={clearAllWishlist}>
+            Clear All
+          </Button>
+        )}
+      </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {wishlistItems.map((item) => (

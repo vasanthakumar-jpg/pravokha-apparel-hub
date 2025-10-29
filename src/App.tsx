@@ -18,6 +18,7 @@ import FAQ from "./pages/FAQ";
 import SizeGuide from "./pages/SizeGuide";
 import ShippingReturns from "./pages/ShippingReturns";
 import Wishlist from "./pages/Wishlist";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
                 <Route path="/product/:slug" element={<ProductDetail />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/contact" element={<Contact />} />

@@ -7,16 +7,23 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 
 export default function CartDrawer() {
-  const { items, removeFromCart, updateQuantity, cartTotal, isCartOpen, setIsCartOpen, cartCount } = useCart();
+  const { items, removeFromCart, updateQuantity, cartTotal, isCartOpen, setIsCartOpen, cartCount, clearCart } = useCart();
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="w-full sm:max-w-lg flex flex-col">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5" />
-            Shopping Cart ({cartCount})
-          </SheetTitle>
+          <div className="flex items-center justify-between">
+            <SheetTitle className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5" />
+              Shopping Cart ({cartCount})
+            </SheetTitle>
+            {items.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearCart} className="text-destructive">
+                Clear All
+              </Button>
+            )}
+          </div>
         </SheetHeader>
 
         {items.length === 0 ? (

@@ -4,12 +4,14 @@ import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
-import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft } from "lucide-react";
+import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft, ZoomIn } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
+import ImageViewer from "@/components/ImageViewer";
+import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -21,6 +23,7 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [mainImage, setMainImage] = useState(0);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
 
   if (!product || !selectedVariant) {
     return <Navigate to="/products" replace />;
@@ -95,12 +98,22 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Images */}
           <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in">
+            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in relative group">
               <img
                 src={selectedVariant.images[mainImage]}
                 alt={product.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => setImageViewerOpen(true)}
               />
+              <Button
+                variant="secondary"
+                size="sm"
+                className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => setImageViewerOpen(true)}
+              >
+                <ZoomIn className="h-4 w-4 mr-2" />
+                View Full Size
+              </Button>
             </div>
             
             <div className="grid grid-cols-4 gap-4">
@@ -261,7 +274,7 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <RefreshCw className="h-5 w-5 text-primary flex-shrink-0" />
+                <RefreshCw className="h-5 w-5 text-accent flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Easy Returns</p>
                   <p className="text-xs text-muted-foreground">30-day return policy</p>
@@ -288,16 +301,51 @@ export default function ProductDetail() {
           
           <TabsContent value="description" className="mt-6 space-y-4">
             <p className="text-muted-foreground leading-relaxed">{product.description}</p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+            
+            <div className="grid md:grid-cols-2 gap-4 mt-6">
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Material</h4>
+                <p className="text-sm text-muted-foreground">
+                  Premium Cotton Blend (60% Cotton, 40% Polyester) - Breathable, durable, and comfortable for all-day wear
+                </p>
+              </div>
+              <div className="p-4 rounded-lg bg-muted/50">
+                <h4 className="font-semibold mb-2">Best For</h4>
+                <p className="text-sm text-muted-foreground">
+                  Casual wear, sports activities, gym workouts, and everyday comfort
+                </p>
+              </div>
+            </div>
+
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-4">
               <li>Premium quality fabric for maximum comfort</li>
               <li>Breathable and moisture-wicking properties</li>
               <li>Perfect fit with excellent durability</li>
               <li>Easy care - machine washable</li>
+              <li>Available in multiple colors and sizes</li>
             </ul>
+
+            <div className="p-4 rounded-lg bg-accent/10 border border-accent/20 mt-6">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <RefreshCw className="h-5 w-5 text-accent" />
+                Bulk Order Pricing
+              </h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                Special discounts available for bulk orders! Perfect for teams, events, or businesses.
+              </p>
+              <ul className="text-sm space-y-1">
+                <li>• 50-99 pieces: 10% discount</li>
+                <li>• 100-199 pieces: 15% discount</li>
+                <li>• 200+ pieces: 20% discount</li>
+              </ul>
+              <p className="text-sm text-muted-foreground mt-3">
+                Contact us at bulk@pravokha.com for custom orders and quotes.
+              </p>
+            </div>
           </TabsContent>
           
           <TabsContent value="reviews" className="mt-6">
-            <p className="text-muted-foreground">Customer reviews will be displayed here.</p>
+            <ProductReviews productId={product.id} />
           </TabsContent>
           
           <TabsContent value="shipping" className="mt-6 space-y-4">
@@ -329,6 +377,13 @@ export default function ProductDetail() {
           </section>
         )}
       </div>
+
+      <ImageViewer
+        images={selectedVariant.images}
+        currentIndex={mainImage}
+        open={imageViewerOpen}
+        onClose={() => setImageViewerOpen(false)}
+      />
     </div>
   );
 }
