@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
-import ProductReviews from "@/components/ProductReviews";
+import { ProductReviews } from "@/components/ProductReviews";
 
 export default function ProductDetail() {
   const { slug } = useParams();

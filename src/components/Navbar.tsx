@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Heart, Menu, LogOut, User } from "lucide-react";
+import { ShoppingCart, Search, Heart, Menu, LogOut, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
@@ -25,6 +25,7 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,11 +49,29 @@ export default function Navbar() {
   };
 
   const toggleSearch = () => {
-    setSearchOpen(!searchOpen);
-    if (!searchOpen) {
+    const newState = !searchOpen;
+    setSearchOpen(newState);
+    if (newState) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
+    } else {
+      setSearchQuery("");
     }
   };
+
+  // Close search on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        if (searchOpen) {
+          setSearchOpen(false);
+          setSearchQuery("");
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchOpen]);
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
@@ -131,7 +150,7 @@ export default function Navbar() {
           {/* Right: Search, Favourite, Cart, Theme, Login/Logout */}
           <div className="flex items-center gap-1">
             {/* Search */}
-            <div className="relative">
+            <div className="relative" ref={searchRef}>
               {searchOpen ? (
                 <form onSubmit={handleSearch} className="flex items-center gap-2 absolute right-0 top-1/2 -translate-y-1/2 bg-background border rounded-lg px-3 py-2 shadow-lg animate-scale-in w-[200px] md:w-[280px] z-50">
                   <Input
@@ -142,8 +161,19 @@ export default function Navbar() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="border-0 p-0 h-6 focus-visible:ring-0 text-sm"
                   />
+                  {searchQuery && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => setSearchQuery("")}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={toggleSearch}>
-                    <Search className="h-4 w-4" />
+                    <X className="h-4 w-4" />
                   </Button>
                 </form>
               ) : (
