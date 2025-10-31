@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import HeroCarousel from "@/components/HeroCarousel";
 import ProductCard from "@/components/ProductCard";
+import { CategoryCard } from "@/components/CategoryCard";
+import { BottomBannerCarousel } from "@/components/BottomBannerCarousel";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Truck, Shield, RefreshCw } from "lucide-react";
@@ -98,8 +100,35 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA Banner */}
+      {/* Category Section */}
       <section className="py-16">
+        <div className="container">
+          <h2 className="text-3xl font-bold mb-8 text-center">Shop by Category</h2>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <CategoryCard 
+              title="Men"
+              description="T-shirts, Track Pants & Shorts"
+              image="/placeholder.svg"
+              link="/products?category=men"
+            />
+            <CategoryCard 
+              title="Women"
+              description="T-shirts, Track Pants & Shorts"
+              image="/placeholder.svg"
+              link="/products?category=women"
+            />
+            <CategoryCard 
+              title="Kids"
+              description="T-shirts, Track Pants & Shorts"
+              image="/placeholder.svg"
+              link="/products?category=kids"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="py-16 bg-muted/50">
         <div className="container">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-hero p-8 md:p-12 text-background">
             <div className="relative z-10 max-w-2xl">
@@ -110,16 +139,25 @@ export default function Index() {
                 Get exclusive access to new collections, special offers, and style tips.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-background text-foreground hover:bg-background/90">
-                  Shop Now
-                </Button>
-                <Button size="lg" variant="outline" className="border-background bg-background/10 text-background hover:bg-background/20">
-                  Learn More
-                </Button>
+                <Link to="/products">
+                  <Button size="lg" className="bg-background text-foreground hover:bg-background/90">
+                    Shop Now
+                  </Button>
+                </Link>
+                <Link to="/learn-more">
+                  <Button size="lg" variant="outline" className="border-background bg-background/10 text-background hover:bg-background/20">
+                    Learn More
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Bottom Banner Carousel */}
+      <section className="py-0">
+        <BottomBannerCarousel />
       </section>
     </div>
   );

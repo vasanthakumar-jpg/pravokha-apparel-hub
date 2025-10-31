@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -23,12 +24,41 @@ export default function Contact() {
     phone: "",
     message: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (name: string, value: string) => {
+    try {
+      if (name === "name") {
+        z.string().min(2, "Name must be at least 2 characters").max(100).parse(value);
+      } else if (name === "email") {
+        z.string().email("Invalid email address").max(255).parse(value);
+      } else if (name === "phone" && value) {
+        z.string().regex(/^[0-9]{10}$/, "Phone must be 10 digits").parse(value);
+      } else if (name === "message") {
+        z.string().min(10, "Message must be at least 10 characters").max(1000).parse(value);
+      }
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+      return true;
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        setErrors((prev) => ({ ...prev, [name]: error.errors[0].message }));
+      }
+      return false;
+    }
+  };
+
+  const handleChange = (name: string, value: string) => {
+    setFormData({ ...formData, [name]: value });
+    if (value) validateField(name, value);
+    else setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       contactSchema.parse(formData);
+      setErrors({});
       setLoading(true);
 
       // Simulate sending message
@@ -42,9 +72,16 @@ export default function Contact() {
       setFormData({ name: "", email: "", phone: "", message: "" });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
         toast({
           title: "Validation Error",
-          description: error.errors[0].message,
+          description: "Please check the form for errors",
           variant: "destructive",
         });
       } else {
@@ -60,7 +97,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 px-4 md:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-4 text-center">Contact Us</h1>
         <p className="text-muted-foreground text-center mb-12 text-lg">
@@ -83,10 +120,13 @@ export default function Contact() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => handleChange("name", e.target.value)}
+                      onBlur={(e) => validateField("name", e.target.value)}
                       placeholder="John Doe"
+                      className={cn(errors.name && "border-destructive focus-visible:ring-destructive")}
                       required
                     />
+                    {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
                   </div>
                   <div>
                     <Label htmlFor="email">Email *</Label>
@@ -94,10 +134,13 @@ export default function Contact() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      onBlur={(e) => validateField("email", e.target.value)}
                       placeholder="you@example.com"
+                      className={cn(errors.email && "border-destructive focus-visible:ring-destructive")}
                       required
                     />
+                    {errors.email && <p className="text-sm text-destructive mt-1">{errors.email}</p>}
                   </div>
                   <div>
                     <Label htmlFor="phone">Phone</Label>
@@ -105,20 +148,26 @@ export default function Contact() {
                       id="phone"
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => handleChange("phone", e.target.value)}
+                      onBlur={(e) => e.target.value && validateField("phone", e.target.value)}
                       placeholder="9876543210"
+                      className={cn(errors.phone && "border-destructive focus-visible:ring-destructive")}
                     />
+                    {errors.phone && <p className="text-sm text-destructive mt-1">{errors.phone}</p>}
                   </div>
                   <div>
                     <Label htmlFor="message">Message *</Label>
                     <Textarea
                       id="message"
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onChange={(e) => handleChange("message", e.target.value)}
+                      onBlur={(e) => validateField("message", e.target.value)}
                       placeholder="How can we help you?"
                       rows={5}
+                      className={cn(errors.message && "border-destructive focus-visible:ring-destructive")}
                       required
                     />
+                    {errors.message && <p className="text-sm text-destructive mt-1">{errors.message}</p>}
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Sending..." : "Send Message"}

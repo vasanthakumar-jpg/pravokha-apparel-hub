@@ -19,6 +19,7 @@ import SizeGuide from "./pages/SizeGuide";
 import ShippingReturns from "./pages/ShippingReturns";
 import Wishlist from "./pages/Wishlist";
 import ResetPassword from "./pages/ResetPassword";
+import LearnMore from "./pages/LearnMore";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/size-guide" element={<SizeGuide />} />
                 <Route path="/shipping-returns" element={<ShippingReturns />} />
+                <Route path="/learn-more" element={<LearnMore />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

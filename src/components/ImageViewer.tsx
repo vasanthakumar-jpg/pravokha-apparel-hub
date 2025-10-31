@@ -23,7 +23,7 @@ export default function ImageViewer({ images, currentIndex, open, onClose }: Ima
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-full p-0">
+      <DialogContent className="max-w-4xl w-full p-0" onInteractOutside={(e) => e.preventDefault()}>
         <div className="relative w-full aspect-square bg-muted">
           <img
             src={images[index]}

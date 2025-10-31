@@ -4,13 +4,14 @@ import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
-import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft, ZoomIn } from "lucide-react";
+import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft, ZoomIn, RotateCw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
+import ProductView360 from "@/components/ProductView360";
 import { ProductReviews } from "@/components/ProductReviews";
 
 export default function ProductDetail() {
@@ -24,6 +25,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(0);
   const [mainImage, setMainImage] = useState(0);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [view360Open, setView360Open] = useState(false);
 
   if (!product || !selectedVariant) {
     return <Navigate to="/products" replace />;
@@ -87,7 +89,7 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="container py-6">
+      <div className="container py-6 px-4 md:px-6 lg:px-8">
         <Link to="/">
           <Button variant="ghost" className="mb-4">
             <ChevronLeft className="h-4 w-4 mr-2" />
@@ -105,15 +107,24 @@ export default function ProductDetail() {
                 className="w-full h-full object-cover cursor-pointer"
                 onClick={() => setImageViewerOpen(true)}
               />
-              <Button
-                variant="secondary"
-                size="sm"
-                className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => setImageViewerOpen(true)}
-              >
-                <ZoomIn className="h-4 w-4 mr-2" />
-                View Full Size
-              </Button>
+              <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setImageViewerOpen(true)}
+                >
+                  <ZoomIn className="h-4 w-4 mr-2" />
+                  Zoom
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setView360Open(true)}
+                >
+                  <RotateCw className="h-4 w-4 mr-2" />
+                  360° View
+                </Button>
+              </div>
             </div>
             
             <div className="grid grid-cols-4 gap-4">
@@ -383,6 +394,12 @@ export default function ProductDetail() {
         currentIndex={mainImage}
         open={imageViewerOpen}
         onClose={() => setImageViewerOpen(false)}
+      />
+
+      <ProductView360
+        images={selectedVariant.images}
+        open={view360Open}
+        onClose={() => setView360Open(false)}
       />
     </div>
   );
