@@ -89,7 +89,7 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="container py-6 px-4 md:px-6 lg:px-8">
+      <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <Link to="/">
           <Button variant="ghost" className="mb-4">
             <ChevronLeft className="h-4 w-4 mr-2" />
@@ -148,8 +148,8 @@ export default function ProductDetail() {
               {product.newArrival && (
                 <Badge className="mb-2 bg-secondary text-secondary-foreground">New Arrival</Badge>
               )}
-              <h1 className="text-3xl font-bold">{product.title}</h1>
-              <p className="text-muted-foreground mt-1">SKU: {product.sku}</p>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{product.title}</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">SKU: {product.sku}</p>
             </div>
 
             <div className="flex items-center gap-4">
@@ -170,11 +170,11 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-4xl font-bold">₹{product.discountPrice || product.price}</span>
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold">₹{product.discountPrice || product.price}</span>
               {hasDiscount && (
                 <>
-                  <span className="text-2xl text-muted-foreground line-through">₹{product.price}</span>
-                  <Badge className="bg-accent text-accent-foreground">{discountPercent}% OFF</Badge>
+                  <span className="text-xl sm:text-2xl text-muted-foreground line-through">₹{product.price}</span>
+                  <Badge className="bg-accent text-accent-foreground text-xs sm:text-sm">{discountPercent}% OFF</Badge>
                 </>
               )}
             </div>

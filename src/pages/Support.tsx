@@ -36,9 +36,9 @@ export default function Support() {
   ];
 
   return (
-    <div className="container py-8 px-4 md:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-center">Support Center</h1>
+    <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center">Support Center</h1>
         <p className="text-muted-foreground text-center mb-12 text-lg">
           We're here to help! Choose how you'd like to get in touch.
         </p>
