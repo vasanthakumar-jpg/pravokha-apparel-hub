@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, Smartphone, Building2, QrCode } from "lucide-react";
+import { PaymentMethods } from "@/components/PaymentMethods";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
@@ -27,6 +27,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -60,7 +61,12 @@ export default function Checkout() {
   const total = cartTotal + shipping + tax;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,18 +75,26 @@ export default function Checkout() {
     // Comprehensive validation with zod
     try {
       checkoutSchema.parse(formData);
+      setErrors({});
     } catch (error) {
       if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            newErrors[err.path[0].toString()] = err.message;
+          }
+        });
+        setErrors(newErrors);
         toast({
           title: "Validation Error",
-          description: error.errors[0].message,
+          description: "Please fix the errors in the form",
           variant: "destructive",
         });
         return;
       }
     }
 
-    // Simulate payment processing (TODO: Integrate Razorpay)
+    // Simulate payment processing
     toast({
       title: "Order placed successfully! 🎉",
       description: `Your order of ₹${total} has been confirmed. Order ID: #${Date.now().toString().slice(-8)}`,
@@ -108,15 +122,15 @@ export default function Checkout() {
   }
 
   return (
-    <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-8">Checkout</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {/* Shipping Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Shipping Information</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">Shipping Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -128,8 +142,10 @@ export default function Checkout() {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="John Doe"
+                    className={cn(errors.name && "border-red-500")}
                     required
                   />
+                  {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone *</Label>
@@ -140,8 +156,10 @@ export default function Checkout() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+91 9876543210"
+                    className={cn(errors.phone && "border-red-500")}
                     required
                   />
+                  {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                 </div>
               </div>
               <div>
@@ -153,8 +171,10 @@ export default function Checkout() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="john@example.com"
+                  className={cn(errors.email && "border-red-500")}
                   required
                 />
+                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
               </div>
               <div>
                 <Label htmlFor="address">Address *</Label>
@@ -164,8 +184,10 @@ export default function Checkout() {
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Street address"
+                  className={cn(errors.address && "border-red-500")}
                   required
                 />
+                {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -176,8 +198,10 @@ export default function Checkout() {
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="Mumbai"
+                    className={cn(errors.city && "border-red-500")}
                     required
                   />
+                  {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
                 </div>
                 <div>
                   <Label htmlFor="pincode">Pincode *</Label>
@@ -187,51 +211,17 @@ export default function Checkout() {
                     value={formData.pincode}
                     onChange={handleInputChange}
                     placeholder="400001"
+                    className={cn(errors.pincode && "border-red-500")}
                     required
                   />
+                  {errors.pincode && <p className="text-xs text-red-500 mt-1">{errors.pincode}</p>}
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Payment Method */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Method</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                  <RadioGroupItem value="upi" id="upi" />
-                  <Label htmlFor="upi" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <Smartphone className="h-5 w-5 text-primary" />
-                    <span>UPI (Google Pay, PhonePe, Paytm)</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    <span>Credit/Debit Card</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                  <RadioGroupItem value="netbanking" id="netbanking" />
-                  <Label htmlFor="netbanking" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <Building2 className="h-5 w-5 text-primary" />
-                    <span>Net Banking</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                  <RadioGroupItem value="qr" id="qr" />
-                  <Label htmlFor="qr" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <QrCode className="h-5 w-5 text-primary" />
-                    <span>QR Code</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
+          <PaymentMethods value={paymentMethod} onChange={setPaymentMethod} />
         </div>
 
         {/* Order Summary */}

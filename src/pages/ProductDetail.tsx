@@ -111,17 +111,19 @@ export default function ProductDetail() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  className="hover:scale-105 transition-transform"
                   onClick={() => setImageViewerOpen(true)}
                 >
-                  <ZoomIn className="h-4 w-4 mr-2" />
+                  <ZoomIn className="h-4 w-4 mr-2 hover:rotate-90 transition-transform duration-300" />
                   Zoom
                 </Button>
                 <Button
                   variant="secondary"
                   size="sm"
+                  className="hover:scale-105 transition-transform"
                   onClick={() => setView360Open(true)}
                 >
-                  <RotateCw className="h-4 w-4 mr-2" />
+                  <RotateCw className="h-4 w-4 mr-2 hover:rotate-180 transition-transform duration-300" />
                   360° View
                 </Button>
               </div>
@@ -183,10 +185,10 @@ export default function ProductDetail() {
 
             {/* Color Selection */}
             <div>
-              <Label className="text-sm font-semibold mb-3 block">
+              <Label className="text-sm sm:text-base font-semibold mb-3 block">
                 Color: {selectedVariant.colorName}
               </Label>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {product.variants.map((variant) => (
                   <button
                     key={variant.id}
@@ -195,9 +197,9 @@ export default function ProductDetail() {
                       setMainImage(0);
                       setSelectedSize("");
                     }}
-                    className={`h-12 w-12 rounded-full border-2 transition-all ${
+                    className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 transition-all duration-300 hover:scale-125 ${
                       selectedVariant.id === variant.id
-                        ? "border-primary scale-110 shadow-md"
+                        ? "border-primary scale-110 shadow-lg"
                         : "border-border hover:scale-105"
                     }`}
                     style={{ backgroundColor: variant.colorHex }}
@@ -210,21 +212,21 @@ export default function ProductDetail() {
             {/* Size Selection */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <Label className="text-sm font-semibold">Size</Label>
+                <Label className="text-sm sm:text-base font-semibold">Size</Label>
                 <Link to="/size-guide">
-                  <Button variant="link" size="sm" className="h-auto p-0">
+                  <Button variant="link" size="sm" className="h-auto p-0 hover:scale-105 transition-transform">
                     Size Guide
                   </Button>
                 </Link>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {selectedVariant.sizes.map((sizeOption) => (
                   <Button
                     key={sizeOption.size}
                     variant={selectedSize === sizeOption.size ? "default" : "outline"}
                     disabled={sizeOption.stock === 0}
                     onClick={() => setSelectedSize(sizeOption.size)}
-                    className={selectedSize === sizeOption.size ? "bg-primary" : ""}
+                    className={`text-xs sm:text-sm hover:scale-110 transition-transform ${selectedSize === sizeOption.size ? "bg-primary" : ""}`}
                   >
                     {sizeOption.size}
                   </Button>
@@ -234,11 +236,12 @@ export default function ProductDetail() {
 
             {/* Quantity */}
             <div>
-              <Label className="text-sm font-semibold mb-3 block">Quantity</Label>
+              <Label className="text-sm sm:text-base font-semibold mb-3 block">Quantity</Label>
               <div className="flex items-center border rounded-md w-fit">
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="hover:scale-110 transition-transform"
                   onClick={() => setQuantity(Math.max(0, quantity - 1))}
                 >
                   <Minus className="h-4 w-4" />
@@ -247,6 +250,7 @@ export default function ProductDetail() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="hover:scale-110 transition-transform"
                   onClick={() => setQuantity(quantity + 1)}
                 >
                   <Plus className="h-4 w-4" />
@@ -254,9 +258,110 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3">
-              <Button
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <Button 
+                size="lg" 
+                className="flex-1 gap-2 hover:scale-105 transition-transform" 
+                onClick={handleAddToCart}
+              >
+                Add to Cart
+              </Button>
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="flex-1 hover:scale-105 transition-transform" 
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="gap-2 hover:scale-105 transition-transform group"
+              >
+                <Heart className="h-5 w-5 group-hover:fill-red-500 group-hover:text-red-500 transition-colors" />
+                Wishlist
+              </Button>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-4 pt-6">
+              <div className="flex items-center gap-3">
+                <Truck className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                <span className="text-sm">Free shipping on orders above ₹999</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <RefreshCw className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                <span className="text-sm">30-day easy returns</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Shield className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                <span className="text-sm">100% secure payments</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="mt-12">
+          <Tabs defaultValue="description">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
+            </TabsList>
+            <TabsContent value="description" className="mt-6">
+              <div className="prose max-w-none">
+                <p>{product.description}</p>
+              </div>
+            </TabsContent>
+            <TabsContent value="reviews" className="mt-6">
+              <ProductReviews productId={product.id} />
+            </TabsContent>
+            <TabsContent value="shipping" className="mt-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Shipping Information</h3>
+                  <p className="text-muted-foreground">Free shipping on orders above ₹999. Standard delivery takes 5-7 business days.</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Returns Policy</h3>
+                  <p className="text-muted-foreground">30-day return policy. Items must be unused and in original packaging.</p>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-6 gsap-fade-in">You May Also Like</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <ImageViewer
+        images={selectedVariant.images}
+        currentIndex={mainImage}
+        open={imageViewerOpen}
+        onClose={() => setImageViewerOpen(false)}
+      />
+
+      <ProductView360
+        images={selectedVariant.images}
+        open={view360Open}
+        onClose={() => setView360Open(false)}
+      />
+    </div>
+  );
+}
                 size="lg"
                 className="flex-1 bg-primary hover:bg-primary-hover"
                 onClick={handleAddToCart}

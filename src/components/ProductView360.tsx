@@ -30,14 +30,17 @@ export default function ProductView360({ images, open, onClose }: ProductView360
     if (!isDragging) return;
     
     const diff = e.clientX - startX;
-    const sensitivity = 10;
+    const sensitivity = 5; // Lower sensitivity for smoother rotation
     
     if (Math.abs(diff) > sensitivity) {
-      if (diff > 0) {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-      } else {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-      }
+      const direction = diff > 0 ? -1 : 1; // Reverse direction for natural rotation
+      const steps = Math.floor(Math.abs(diff) / sensitivity);
+      
+      setCurrentIndex((prev) => {
+        const newIndex = prev + (direction * steps);
+        if (newIndex < 0) return images.length + (newIndex % images.length);
+        return newIndex % images.length;
+      });
       setStartX(e.clientX);
     }
   };
@@ -55,14 +58,17 @@ export default function ProductView360({ images, open, onClose }: ProductView360
     if (!isDragging) return;
     
     const diff = e.touches[0].clientX - startX;
-    const sensitivity = 10;
+    const sensitivity = 5; // Lower sensitivity for smoother rotation
     
     if (Math.abs(diff) > sensitivity) {
-      if (diff > 0) {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-      } else {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-      }
+      const direction = diff > 0 ? -1 : 1; // Reverse direction for natural rotation
+      const steps = Math.floor(Math.abs(diff) / sensitivity);
+      
+      setCurrentIndex((prev) => {
+        const newIndex = prev + (direction * steps);
+        if (newIndex < 0) return images.length + (newIndex % images.length);
+        return newIndex % images.length;
+      });
       setStartX(e.touches[0].clientX);
     }
   };

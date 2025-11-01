@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
+import newSeasonImg from "@/assets/category-new-season.jpg";
+import saleImg from "@/assets/category-sale.jpg";
+import premiumImg from "@/assets/category-premium.jpg";
 
 interface BannerSlide {
   id: number;
@@ -16,26 +19,26 @@ const banners: BannerSlide[] = [
   {
     id: 1,
     title: "New Season Arrivals",
-    description: "Discover the latest trends in fashion",
-    image: "/placeholder.svg",
-    link: "/products?filter=newArrival",
-    buttonText: "Shop New",
+    description: "Discover the latest trends in fashion. Fresh styles for the modern wardrobe.",
+    image: newSeasonImg,
+    link: "/products",
+    buttonText: "Shop New Collection",
   },
   {
     id: 2,
     title: "Limited Time Offer",
-    description: "Up to 50% off on selected items",
-    image: "/placeholder.svg",
+    description: "Up to 50% off on selected items. Don't miss out on incredible deals!",
+    image: saleImg,
     link: "/products",
-    buttonText: "Shop Deals",
+    buttonText: "Shop Deals Now",
   },
   {
     id: 3,
     title: "Premium Quality",
-    description: "Experience comfort and style",
-    image: "/placeholder.svg",
-    link: "/products?filter=featured",
-    buttonText: "Explore",
+    description: "Experience unmatched comfort and timeless style with our premium collection.",
+    image: premiumImg,
+    link: "/products",
+    buttonText: "Explore Premium",
   },
 ];
 

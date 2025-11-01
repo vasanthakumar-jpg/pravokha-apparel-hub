@@ -23,18 +23,18 @@ export default function ImageViewer({ images, currentIndex, open, onClose }: Ima
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-full p-0" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="max-w-7xl w-full p-0" onInteractOutside={onClose}>
         <div className="relative w-full aspect-square bg-muted">
           <img
             src={images[index]}
             alt={`Product image ${index + 1}`}
             className="w-full h-full object-contain"
           />
-          
+
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-4 right-4 bg-background/80 hover:bg-background"
+            className="absolute top-4 right-4 z-10 bg-background/80 hover:bg-background"
             onClick={onClose}
           >
             <X className="h-4 w-4" />
