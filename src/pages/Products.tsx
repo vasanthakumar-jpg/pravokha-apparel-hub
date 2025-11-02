@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,6 +19,8 @@ export default function Products() {
   const [tempPriceRange, setTempPriceRange] = useState([0, 5000]);
   const [tempCategories, setTempCategories] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useGsapAnimations();
 
   const categoryParam = searchParams.get("category");
   const searchQuery = searchParams.get("search");
@@ -143,7 +146,7 @@ export default function Products() {
     <div className="min-h-screen flex flex-col">
       <div className="container py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 gsap-fade-in">
           <div>
             <h1 className="text-3xl font-bold">All Products</h1>
             <p className="text-muted-foreground mt-1">
@@ -187,7 +190,7 @@ export default function Products() {
         {/* Content */}
         <div className="flex gap-8">
           {/* Desktop Filters */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
+          <aside className="hidden lg:block w-64 flex-shrink-0 gsap-slide-left">
             <div className="sticky top-20 space-y-6 p-4 border rounded-lg bg-card">
               <div className="flex items-center justify-between">
                 <h2 className="font-semibold text-lg flex items-center gap-2">
@@ -203,7 +206,7 @@ export default function Products() {
           </aside>
 
           {/* Products Grid */}
-          <div className="flex-1">
+          <div className="flex-1 gsap-fade-in">
             {filteredProducts.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-muted-foreground">No products found matching your criteria.</p>

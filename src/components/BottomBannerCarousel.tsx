@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import newSeasonImg from "@/assets/category-new-season.jpg";
 import saleImg from "@/assets/category-sale.jpg";
 import premiumImg from "@/assets/category-premium.jpg";
+import LazyImage from "./LazyImage";
 
 interface BannerSlide {
   id: number;
@@ -81,11 +82,14 @@ export const BottomBannerCarousel = () => {
           }`}
         >
           <div
-            className="w-full h-full bg-cover bg-center relative"
-            style={{
-              backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.2)), url(${banner.image})`,
-            }}
+            className="w-full h-full relative"
           >
+            <LazyImage 
+              src={banner.image} 
+              alt={banner.title}
+              className="w-full h-full object-cover absolute inset-0"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
             <div className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 animate-fade-up">
                 {banner.title}

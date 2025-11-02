@@ -5,6 +5,7 @@ import hero1 from "@/assets/hero-premium-tees.jpg";
 import hero2 from "@/assets/hero-2.jpg";
 import hero3 from "@/assets/hero-3.jpg";
 import { Link } from "react-router-dom";
+import LazyImage from "./LazyImage";
 
 const slides = [
   {
@@ -77,7 +78,7 @@ export default function HeroCarousel() {
               : "opacity-0 scale-105"
           }`}
         >
-          <img
+          <LazyImage
             src={slide.image}
             alt={slide.title}
             className="w-full h-full object-cover"

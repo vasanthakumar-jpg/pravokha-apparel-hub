@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/data/products";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import LazyImage from "./LazyImage";
 
 interface ProductCardProps {
   product: Product;
@@ -110,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Card className="group overflow-hidden border-border hover:border-primary hover:shadow-lg transition-all duration-300 animate-fade-in">
       <Link to={`/product/${product.slug}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
-          <img
+          <LazyImage
             src={firstVariant.images[0]}
             alt={product.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

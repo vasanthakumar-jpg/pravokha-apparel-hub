@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "./ui/card";
 import { motion } from "framer-motion";
+import LazyImage from "./LazyImage";
 
 interface CategoryCardProps {
   title: string;
@@ -20,11 +21,10 @@ export const CategoryCard = ({ title, description, image, link }: CategoryCardPr
       >
         <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer h-full gsap-scale-in">
           <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
-            <img
+            <LazyImage
               src={image}
               alt={title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">

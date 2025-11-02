@@ -13,12 +13,17 @@ import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
 import ProductView360 from "@/components/ProductView360";
 import { ProductReviews } from "@/components/ProductReviews";
+import LazyImage from "@/components/LazyImage";
+import { useEffect } from "react";
+import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const product = products.find((p) => p.slug === slug);
   const { addToCart } = useCart();
+
+  useGsapAnimations();
 
   const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
   const [selectedSize, setSelectedSize] = useState("");
@@ -100,13 +105,14 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Images */}
           <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in relative group">
-              <img
-                src={selectedVariant.images[mainImage]}
-                alt={product.title}
-                className="w-full h-full object-cover cursor-pointer"
-                onClick={() => setImageViewerOpen(true)}
-              />
+            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in relative group gsap-fade-in">
+              <div onClick={() => setImageViewerOpen(true)} className="cursor-pointer w-full h-full">
+                <LazyImage
+                  src={selectedVariant.images[mainImage]}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="secondary"
@@ -134,18 +140,18 @@ export default function ProductDetail() {
                 <button
                   key={idx}
                   onClick={() => setMainImage(idx)}
-                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-all gsap-scale-in ${
                     mainImage === idx ? "border-primary" : "border-border hover:border-primary/50"
                   }`}
                 >
-                  <img src={image} alt={`${product.title} ${idx + 1}`} className="w-full h-full object-cover" />
+                  <LazyImage src={image} alt={`${product.title} ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
           </div>
 
           {/* Details */}
-          <div className="space-y-6 animate-fade-up">
+          <div className="space-y-6 animate-fade-up gsap-fade-in">
             <div>
               {product.newArrival && (
                 <Badge className="mb-2 bg-secondary text-secondary-foreground">New Arrival</Badge>
@@ -197,7 +203,7 @@ export default function ProductDetail() {
                       setMainImage(0);
                       setSelectedSize("");
                     }}
-                    className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 transition-all duration-300 hover:scale-125 ${
+                    className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 transition-all duration-300 hover:scale-125 gsap-scale-in ${
                       selectedVariant.id === variant.id
                         ? "border-primary scale-110 shadow-lg"
                         : "border-border hover:scale-105"
@@ -226,7 +232,7 @@ export default function ProductDetail() {
                     variant={selectedSize === sizeOption.size ? "default" : "outline"}
                     disabled={sizeOption.stock === 0}
                     onClick={() => setSelectedSize(sizeOption.size)}
-                    className={`text-xs sm:text-sm hover:scale-110 transition-transform ${selectedSize === sizeOption.size ? "bg-primary" : ""}`}
+                    className={`text-xs sm:text-sm hover:scale-110 transition-transform gsap-scale-in ${selectedSize === sizeOption.size ? "bg-primary" : ""}`}
                   >
                     {sizeOption.size}
                   </Button>
@@ -262,7 +268,7 @@ export default function ProductDetail() {
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button 
                 size="lg" 
-                className="flex-1 gap-2 hover:scale-105 transition-transform" 
+                className="flex-1 gap-2 hover:scale-105 transition-transform gsap-slide-left" 
                 onClick={handleAddToCart}
               >
                 Add to Cart
@@ -270,7 +276,7 @@ export default function ProductDetail() {
               <Button 
                 size="lg" 
                 variant="secondary" 
-                className="flex-1 hover:scale-105 transition-transform" 
+                className="flex-1 hover:scale-105 transition-transform gsap-slide-right" 
                 onClick={handleBuyNow}
               >
                 Buy Now
@@ -278,7 +284,7 @@ export default function ProductDetail() {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="gap-2 hover:scale-105 transition-transform group"
+                className="gap-2 hover:scale-105 transition-transform group gsap-scale-in"
               >
                 <Heart className="h-5 w-5 group-hover:fill-red-500 group-hover:text-red-500 transition-colors" />
                 Wishlist
@@ -298,110 +304,6 @@ export default function ProductDetail() {
               <div className="flex items-center gap-3">
                 <Shield className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
                 <span className="text-sm">100% secure payments</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="mt-12">
-          <Tabs defaultValue="description">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="description">Description</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
-            </TabsList>
-            <TabsContent value="description" className="mt-6">
-              <div className="prose max-w-none">
-                <p>{product.description}</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="reviews" className="mt-6">
-              <ProductReviews productId={product.id} />
-            </TabsContent>
-            <TabsContent value="shipping" className="mt-6">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Shipping Information</h3>
-                  <p className="text-muted-foreground">Free shipping on orders above ₹999. Standard delivery takes 5-7 business days.</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Returns Policy</h3>
-                  <p className="text-muted-foreground">30-day return policy. Items must be unused and in original packaging.</p>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-6 gsap-fade-in">You May Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {relatedProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <ImageViewer
-        images={selectedVariant.images}
-        currentIndex={mainImage}
-        open={imageViewerOpen}
-        onClose={() => setImageViewerOpen(false)}
-      />
-
-      <ProductView360
-        images={selectedVariant.images}
-        open={view360Open}
-        onClose={() => setView360Open(false)}
-      />
-    </div>
-  );
-}
-                size="lg"
-                className="flex-1 bg-primary hover:bg-primary-hover"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </Button>
-              <Button 
-                size="lg" 
-                className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
-                onClick={handleBuyNow}
-              >
-                Buy Now
-              </Button>
-              <Button size="lg" variant="outline">
-                <Heart className="h-5 w-5" />
-              </Button>
-            </div>
-
-            {/* Features */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <Truck className="h-5 w-5 text-primary flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Free Delivery</p>
-                  <p className="text-xs text-muted-foreground">On orders above ₹999</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <RefreshCw className="h-5 w-5 text-accent flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Easy Returns</p>
-                  <p className="text-xs text-muted-foreground">30-day return policy</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <Shield className="h-5 w-5 text-primary flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Secure Payment</p>
-                  <p className="text-xs text-muted-foreground">100% protected</p>
-                </div>
               </div>
             </div>
           </div>
@@ -484,7 +386,7 @@ export default function ProductDetail() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
+            <h2 className="text-2xl font-bold mb-6 gsap-fade-in">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {relatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
