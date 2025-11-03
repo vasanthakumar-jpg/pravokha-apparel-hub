@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Heart, Menu, LogOut, User, X } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
@@ -146,9 +147,7 @@ export default function Navbar() {
             </Sheet>
 
             <Link to="/" className="flex items-center">
-              <h1 className="text-lg md:text-xl lg:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap">
-                PRAVOKHA
-              </h1>
+              <img src={logo} alt="PRAVOKHA Logo" className="h-8 md:h-10 w-auto" loading="eager" />
             </Link>
           </div>
 

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PaymentMethods } from "@/components/PaymentMethods";
+import { UpiPaymentDialog } from "@/components/UpiPaymentDialog";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,8 @@ export default function Checkout() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [orderNumber, setOrderNumber] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -103,10 +106,15 @@ export default function Checkout() {
       return;
     }
 
-    const orderNumber = `ORD${Date.now().toString().slice(-8)}`;
+    // Generate order number and show payment dialog
+    const newOrderNumber = `ORD${Date.now().toString().slice(-8)}`;
+    setOrderNumber(newOrderNumber);
+    setShowPaymentDialog(true);
+  };
 
+  const handlePaymentComplete = async (paymentDetails: any) => {
     try {
-      // Save order to database
+      // Save order to database with payment details
       const { error } = await supabase.from("orders").insert({
         user_id: user.id,
         order_number: orderNumber,
@@ -120,9 +128,11 @@ export default function Checkout() {
         subtotal: cartTotal,
         shipping_cost: shipping,
         total: total,
-        payment_method: paymentMethod,
-        order_status: "pending",
-        payment_status: "pending",
+        payment_method: paymentDetails.method,
+        payment_id: paymentDetails.transactionId,
+        order_status: "confirmed",
+        payment_status: "paid",
+        notes: `Payment verified via ${paymentDetails.method.toUpperCase()} - Transaction ID: ${paymentDetails.transactionId}`,
       });
 
       if (error) throw error;
@@ -133,6 +143,7 @@ export default function Checkout() {
       });
 
       clearCart();
+      setShowPaymentDialog(false);
       setTimeout(() => navigate("/orders"), 2000);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -316,7 +327,7 @@ export default function Checkout() {
                 className="w-full bg-primary hover:bg-primary-hover text-lg h-12" 
                 onClick={handleSubmit}
               >
-                Place Order
+                Proceed to Payment
               </Button>
 
               <p className="text-xs text-muted-foreground text-center">
@@ -326,6 +337,15 @@ export default function Checkout() {
           </Card>
         </div>
       </div>
+
+      {/* UPI Payment Dialog */}
+      <UpiPaymentDialog
+        open={showPaymentDialog}
+        onClose={() => setShowPaymentDialog(false)}
+        amount={total}
+        orderNumber={orderNumber}
+        onPaymentComplete={handlePaymentComplete}
+      />
     </div>
   );
 }
