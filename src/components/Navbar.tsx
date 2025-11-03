@@ -125,6 +125,11 @@ export default function Navbar() {
                   <Link to="/contact" onClick={closeMobileMenu}>
                     <Button variant="ghost" className="w-full justify-start">Contact</Button>
                   </Link>
+                  {user && (
+                    <Link to="/orders" onClick={closeMobileMenu}>
+                      <Button variant="ghost" className="w-full justify-start">My Orders</Button>
+                    </Link>
+                  )}
                   {user ? (
                     <Button variant="ghost" className="w-full justify-start" onClick={() => { handleLogout(); closeMobileMenu(); }}>
                       <LogOut className="h-4 w-4 mr-2" />Logout

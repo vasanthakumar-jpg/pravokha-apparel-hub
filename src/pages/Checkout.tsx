@@ -69,7 +69,7 @@ export default function Checkout() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Comprehensive validation with zod
@@ -94,14 +94,54 @@ export default function Checkout() {
       }
     }
 
-    // Simulate payment processing
-    toast({
-      title: "Order placed successfully! 🎉",
-      description: `Your order of ₹${total} has been confirmed. Order ID: #${Date.now().toString().slice(-8)}`,
-    });
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "Please login to place an order",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    clearCart();
-    setTimeout(() => navigate("/"), 2000);
+    const orderNumber = `ORD${Date.now().toString().slice(-8)}`;
+
+    try {
+      // Save order to database
+      const { error } = await supabase.from("orders").insert({
+        user_id: user.id,
+        order_number: orderNumber,
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        shipping_address: formData.address,
+        shipping_city: formData.city,
+        shipping_pincode: formData.pincode,
+        items: items as any,
+        subtotal: cartTotal,
+        shipping_cost: shipping,
+        total: total,
+        payment_method: paymentMethod,
+        order_status: "pending",
+        payment_status: "pending",
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Order placed successfully! 🎉",
+        description: `Your order #${orderNumber} has been confirmed. Check order history for details.`,
+      });
+
+      clearCart();
+      setTimeout(() => navigate("/orders"), 2000);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast({
+        title: "Error",
+        description: "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
