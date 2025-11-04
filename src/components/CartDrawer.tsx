@@ -41,7 +41,7 @@ export default function CartDrawer() {
           </div>
         ) : (
           <>
-            <ScrollArea className="flex-1 -mx-6 px-6">
+            <ScrollArea className="flex-1 -mx-6 px-6 h-[calc(100vh-280px)]">
               <div className="space-y-4 py-4">
                 {items.map((item) => (
                   <div key={`${item.productId}-${item.variantId}-${item.size}`} className="flex gap-4">

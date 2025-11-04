@@ -17,6 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Navbar() {
   const { cartCount, setIsCartOpen } = useCart();
@@ -107,42 +108,44 @@ export default function Navbar() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-72">
+              <SheetContent side="left" className="w-72 flex flex-col">
                 <SheetHeader>
                   <SheetTitle className="text-left">PRAVOKHA</SheetTitle>
                 </SheetHeader>
-                <nav className="mt-6 flex flex-col gap-2">
-                  <Link to="/" onClick={closeMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">Home</Button>
-                  </Link>
-                  {categories.map((category) => (
-                    <Link key={category.id} to={`/products?category=${category.slug}`} onClick={closeMobileMenu}>
-                      <Button variant="ghost" className="w-full justify-start">{category.name}</Button>
+                <ScrollArea className="flex-1 -mx-6 px-6">
+                  <nav className="mt-6 flex flex-col gap-2 pb-4">
+                    <Link to="/" onClick={closeMobileMenu}>
+                      <Button variant="ghost" className="w-full justify-start">Home</Button>
                     </Link>
-                  ))}
-                  <Link to="/support" onClick={closeMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">Support</Button>
-                  </Link>
-                  <Link to="/contact" onClick={closeMobileMenu}>
-                    <Button variant="ghost" className="w-full justify-start">Contact</Button>
-                  </Link>
-                  {user && (
-                    <Link to="/orders" onClick={closeMobileMenu}>
-                      <Button variant="ghost" className="w-full justify-start">My Orders</Button>
+                    {categories.map((category) => (
+                      <Link key={category.id} to={`/products?category=${category.slug}`} onClick={closeMobileMenu}>
+                        <Button variant="ghost" className="w-full justify-start">{category.name}</Button>
+                      </Link>
+                    ))}
+                    <Link to="/support" onClick={closeMobileMenu}>
+                      <Button variant="ghost" className="w-full justify-start">Support</Button>
                     </Link>
-                  )}
-                  {user ? (
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => { handleLogout(); closeMobileMenu(); }}>
-                      <LogOut className="h-4 w-4 mr-2" />Logout
-                    </Button>
-                  ) : (
-                    <Link to="/auth" onClick={closeMobileMenu}>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <User className="h-4 w-4 mr-2" />Login
+                    <Link to="/contact" onClick={closeMobileMenu}>
+                      <Button variant="ghost" className="w-full justify-start">Contact</Button>
+                    </Link>
+                    {user && (
+                      <Link to="/orders" onClick={closeMobileMenu}>
+                        <Button variant="ghost" className="w-full justify-start">My Orders</Button>
+                      </Link>
+                    )}
+                    {user ? (
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => { handleLogout(); closeMobileMenu(); }}>
+                        <LogOut className="h-4 w-4 mr-2" />Logout
                       </Button>
-                    </Link>
-                  )}
-                </nav>
+                    ) : (
+                      <Link to="/auth" onClick={closeMobileMenu}>
+                        <Button variant="ghost" className="w-full justify-start">
+                          <User className="h-4 w-4 mr-2" />Login
+                        </Button>
+                      </Link>
+                    )}
+                  </nav>
+                </ScrollArea>
               </SheetContent>
             </Sheet>
 
