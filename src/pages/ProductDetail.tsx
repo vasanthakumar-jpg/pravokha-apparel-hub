@@ -13,9 +13,11 @@ import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
 import ProductView360 from "@/components/ProductView360";
 import { ProductReviews } from "@/components/ProductReviews";
+import { ReviewStatistics } from "@/components/ReviewStatistics";
 import LazyImage from "@/components/LazyImage";
 import { useEffect } from "react";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -160,7 +162,17 @@ export default function ProductDetail() {
               <p className="text-sm sm:text-base text-muted-foreground mt-1">SKU: {product.sku}</p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <button 
+              onClick={() => {
+                const reviewsTab = document.querySelector('[value="reviews"]') as HTMLElement;
+                reviewsTab?.click();
+                setTimeout(() => {
+                  const reviewsSection = document.getElementById('reviews-section');
+                  reviewsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+              }}
+              className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+            >
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star
@@ -172,10 +184,10 @@ export default function ProductDetail() {
                     }`}
                   />
                 ))}
-                <span className="ml-2 font-medium">{product.rating}</span>
+                <span className="ml-2 font-medium">{product.rating}★</span>
               </div>
-              <span className="text-muted-foreground">({product.reviews} reviews)</span>
-            </div>
+              <span className="text-muted-foreground underline">({product.reviews} reviews)</span>
+            </button>
 
             <div className="flex items-center gap-3">
               <span className="text-3xl sm:text-4xl lg:text-5xl font-bold">₹{product.discountPrice || product.price}</span>
@@ -285,6 +297,45 @@ export default function ProductDetail() {
                 size="lg" 
                 variant="outline" 
                 className="gap-2 hover:scale-105 transition-transform group gsap-scale-in"
+                onClick={async () => {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast({
+                      title: "Please login",
+                      description: "You need to be logged in to add items to wishlist",
+                      variant: "destructive",
+                    });
+                    navigate("/auth");
+                    return;
+                  }
+
+                  const { error } = await supabase
+                    .from("wishlist")
+                    .insert({
+                      user_id: user.id,
+                      product_id: product.id,
+                    });
+
+                  if (error) {
+                    if (error.code === '23505') {
+                      toast({
+                        title: "Already in wishlist",
+                        description: "This item is already in your wishlist",
+                      });
+                    } else {
+                      toast({
+                        title: "Error",
+                        description: "Failed to add to wishlist",
+                        variant: "destructive",
+                      });
+                    }
+                  } else {
+                    toast({
+                      title: "Added to wishlist",
+                      description: `${product.title} has been added to your wishlist`,
+                    });
+                  }
+                }}
               >
                 <Heart className="h-5 w-5 group-hover:fill-red-500 group-hover:text-red-500 transition-colors" />
                 Wishlist
@@ -362,8 +413,19 @@ export default function ProductDetail() {
             </div>
           </TabsContent>
           
-          <TabsContent value="reviews" className="mt-6">
-            <ProductReviews productId={product.id} />
+          <TabsContent value="reviews" className="mt-6" id="reviews-section">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              <div className="md:col-span-1">
+                <ReviewStatistics 
+                  rating={product.rating}
+                  totalRatings={3895}
+                  totalReviews={product.reviews}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <ProductReviews productId={product.id} />
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="shipping" className="mt-6 space-y-4">

@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import HeroCarousel from "@/components/HeroCarousel";
 import { CategoryCard } from "@/components/CategoryCard";
+import { CategorySmallCard } from "@/components/CategorySmallCard";
+import { ComboOfferBanner } from "@/components/ComboOfferBanner";
 import { BottomBannerCarousel } from "@/components/BottomBannerCarousel";
 import { ArrowRight, TrendingUp, Zap, Shield } from "lucide-react";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 import menImg from "@/assets/hero-1.jpg";
 import womenImg from "@/assets/hero-2.jpg";
 import kidsImg from "@/assets/hero-3.jpg";
-import premiumImg from "@/assets/category-premium.jpg";
-import saleImg from "@/assets/category-sale.jpg";
-import newSeasonImg from "@/assets/category-new-season.jpg";
+import tshirtImg from "@/assets/products/tshirt-teal-1.jpg";
+import trackpantsImg from "@/assets/products/trackpants-black-1.jpg";
+import shortsImg from "@/assets/products/shorts-khaki-1.jpg";
 
 export default function Index() {
   useGsapAnimations();
@@ -25,9 +27,35 @@ export default function Index() {
     <div className="min-h-screen flex flex-col">
       <HeroCarousel />
 
-      {/* Shop by Category - 3 Cards in Row */}
+      {/* Combo Offer Banner */}
+      <section className="container py-8">
+        <ComboOfferBanner />
+      </section>
+
+      {/* Shop by Category - Small Cards */}
       <section className="container py-16">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gsap-fade-in">Shop by Category</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+          <CategorySmallCard
+            title="T-Shirts"
+            price="₹325"
+            image={tshirtImg}
+            link="/products?category=t-shirts"
+          />
+          <CategorySmallCard
+            title="Track Pants"
+            price="₹299"
+            image={trackpantsImg}
+            link="/products?category=track-pants"
+          />
+          <CategorySmallCard
+            title="Shorts"
+            price="₹199"
+            image={shortsImg}
+            link="/products?category=shorts"
+          />
+        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
           <CategoryCard
             title="Men"
@@ -35,42 +63,19 @@ export default function Index() {
             image={menImg}
             link="/products?category=t-shirts"
           />
-          <CategoryCard
+          <CategorySmallCard
             title="Women"
-            description="Discover elegant women's fashion"
+            price="Coming Soon"
             image={womenImg}
-            link="/products?category=t-shirts"
+            link="/products"
+            disabled
           />
-          <CategoryCard
+          <CategorySmallCard
             title="Kids"
-            description="Fun and comfortable kids' wear"
+            price="Coming Soon"
             image={kidsImg}
-            link="/products?category=t-shirts"
-          />
-        </div>
-      </section>
-
-      {/* Featured Collections - 3 Cards */}
-      <section className="container py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gsap-fade-in">Featured Collections</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-          <CategoryCard
-            title="Premium Quality"
-            description="Experience luxury and comfort"
-            image={premiumImg}
             link="/products"
-          />
-          <CategoryCard
-            title="Limited Time Offer"
-            description="Up to 50% off selected items"
-            image={saleImg}
-            link="/products"
-          />
-          <CategoryCard
-            title="New Season Arrivals"
-            description="Fresh styles for the season"
-            image={newSeasonImg}
-            link="/products"
+            disabled
           />
         </div>
       </section>

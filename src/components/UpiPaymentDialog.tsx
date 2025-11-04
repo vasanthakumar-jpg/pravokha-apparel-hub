@@ -251,12 +251,15 @@ export const UpiPaymentDialog = ({
         {/* Step 4: Verify Payment */}
         {step === "verify" && (
           <div className="space-y-4">
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-              <p className="text-sm text-yellow-900 dark:text-yellow-100 font-medium">
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm text-blue-900 dark:text-blue-100 font-medium">
                 Payment Verification Required
               </p>
-              <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-                Please enter the transaction ID from your payment app to confirm the payment
+              <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                Please enter the transaction ID from your payment app to verify your payment of ₹{amount}
+              </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                Your payment is being processed. Once verified, your order will be confirmed and you'll receive a confirmation email.
               </p>
             </div>
 

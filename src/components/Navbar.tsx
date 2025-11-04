@@ -147,9 +147,36 @@ export default function Navbar() {
             </Sheet>
 
             <Link to="/" className="flex items-center">
-              <img src={logo} alt="PRAVOKHA Logo" className="h-8 md:h-10 w-auto" loading="eager" />
+              <img src={logo} alt="PRAVOKHA Logo" className="h-10 w-[160px] md:h-12 md:w-[250px] object-contain" loading="eager" />
             </Link>
           </div>
+
+          {/* Desktop Menu - Above 1024px */}
+          <nav className="hidden lg:flex items-center gap-1">
+            <Link to="/">
+              <Button variant="ghost" size="sm">Home</Button>
+            </Link>
+            <Link to="/products">
+              <Button variant="ghost" size="sm">All Products</Button>
+            </Link>
+            <Link to="/products?category=t-shirts">
+              <Button variant="ghost" size="sm">T-shirts</Button>
+            </Link>
+            <Link to="/products?category=track-pants">
+              <Button variant="ghost" size="sm">Track Pants</Button>
+            </Link>
+            <Link to="/products?category=shorts">
+              <Button variant="ghost" size="sm">Shorts</Button>
+            </Link>
+            <Link to="/support">
+              <Button variant="ghost" size="sm">Support</Button>
+            </Link>
+            {user && (
+              <Link to="/orders">
+                <Button variant="ghost" size="sm">My Orders</Button>
+              </Link>
+            )}
+          </nav>
 
           {/* Right: Search, Favourite, Cart, Theme, Login/Logout */}
           <div className="flex items-center gap-1">
