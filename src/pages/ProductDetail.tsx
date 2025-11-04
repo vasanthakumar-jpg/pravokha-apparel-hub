@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,6 @@ import ProductView360 from "@/components/ProductView360";
 import { ProductReviews } from "@/components/ProductReviews";
 import { ReviewStatistics } from "@/components/ReviewStatistics";
 import LazyImage from "@/components/LazyImage";
-import { useEffect } from "react";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 import { supabase } from "@/integrations/supabase/client";
 
