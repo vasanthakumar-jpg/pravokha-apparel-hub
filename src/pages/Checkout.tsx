@@ -61,6 +61,14 @@ export default function Checkout() {
 
   const shipping = 99;
   const tax = Math.round(cartTotal * 0.18);
+  
+  // Check for T-shirt combo: 3 items at Rs 325 each = Rs 949 total
+  const tshirtItems = items.filter(item => item.price === 325);
+  const tshirtCount = tshirtItems.reduce((sum, item) => sum + item.quantity, 0);
+  const hasComboOffer = tshirtCount === 3;
+  const originalTshirtTotal = tshirtItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const comboSavings = hasComboOffer ? originalTshirtTotal - 949 : 0;
+  
   const total = cartTotal + shipping + tax;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -312,6 +320,12 @@ export default function Checkout() {
                   <span>Shipping</span>
                   <span>₹{shipping}</span>
                 </div>
+                {hasComboOffer && (
+                  <div className="flex justify-between text-sm text-accent font-semibold">
+                    <span>🎉 Combo Offer Savings</span>
+                    <span>-₹{comboSavings}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span>Tax (18%)</span>
                   <span>₹{tax}</span>
@@ -321,6 +335,11 @@ export default function Checkout() {
                   <span>Total</span>
                   <span>₹{total}</span>
                 </div>
+                {hasComboOffer && (
+                  <p className="text-xs text-accent font-medium text-center pt-2">
+                    You saved ₹{comboSavings} with our 3 T-shirts combo offer!
+                  </p>
+                )}
               </div>
 
               <Button 

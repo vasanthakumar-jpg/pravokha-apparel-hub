@@ -12,9 +12,9 @@ import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 import categoryMenImg from "@/assets/category-men.jpg";
 import categoryWomenImg from "@/assets/category-women.jpg";
 import categoryKidsImg from "@/assets/category-kids.jpg";
-import tshirtImg from "@/assets/products/tshirt-teal-1.jpg";
-import trackpantsImg from "@/assets/products/trackpants-black-1.jpg";
-import shortsImg from "@/assets/products/shorts-khaki-1.jpg";
+import tshirtImg from "@/assets/category-tshirts.jpg";
+import trackpantsImg from "@/assets/category-trackpants.jpg";
+import shortsImg from "@/assets/category-shorts.jpg";
 
 export default function Index() {
   useGsapAnimations();
@@ -27,30 +27,22 @@ export default function Index() {
     <div className="min-h-screen flex flex-col">
       <HeroCarousel />
 
-      {/* Combo Offer Banner */}
-      <section className="container py-8">
-        <ComboOfferBanner />
-      </section>
-
       {/* Shop by Category - Small Cards */}
       <section className="container py-16">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gsap-fade-in">Shop by Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
           <CategorySmallCard
             title="T-Shirts"
-            price="₹325"
             image={tshirtImg}
             link="/products?category=t-shirts"
           />
           <CategorySmallCard
             title="Track Pants"
-            price="₹299"
             image={trackpantsImg}
             link="/products?category=track-pants"
           />
           <CategorySmallCard
             title="Shorts"
-            price="₹199"
             image={shortsImg}
             link="/products?category=shorts"
           />

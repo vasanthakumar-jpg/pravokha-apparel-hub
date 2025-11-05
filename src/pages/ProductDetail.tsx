@@ -106,12 +106,15 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Images */}
           <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in relative group gsap-fade-in">
-              <div onClick={() => setImageViewerOpen(true)} className="cursor-pointer w-full h-full">
+            <div className="aspect-square overflow-hidden rounded-lg border bg-muted animate-fade-in relative group gsap-fade-in cursor-zoom-in">
+              <div 
+                onClick={() => setImageViewerOpen(true)} 
+                className="cursor-pointer w-full h-full overflow-hidden"
+              >
                 <LazyImage
                   src={selectedVariant.images[mainImage]}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-150"
                 />
               </div>
               <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
