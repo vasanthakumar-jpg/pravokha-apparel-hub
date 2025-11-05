@@ -9,6 +9,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { toast } from "@/hooks/use-toast";
 import { Package, Calendar, MapPin, CreditCard, XCircle } from "lucide-react";
 import { format } from "date-fns";
+import { CancelOrderDialog } from "@/components/CancelOrderDialog";
 
 interface Order {
   id: string;
@@ -31,6 +32,9 @@ export default function OrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [selectedOrderAmount, setSelectedOrderAmount] = useState(0);
 
   useEffect(() => {
     checkUserAndLoadOrders();
@@ -73,20 +77,31 @@ export default function OrderHistory() {
     }
   };
 
-  const cancelOrder = async (orderId: string) => {
+  const handleCancelClick = (orderId: string, amount: number) => {
+    setSelectedOrderId(orderId);
+    setSelectedOrderAmount(amount);
+    setCancelDialogOpen(true);
+  };
+
+  const cancelOrder = async () => {
+    if (!selectedOrderId) return;
+
     try {
       const { error } = await supabase
         .from("orders")
-        .update({ order_status: "cancelled" })
-        .eq("id", orderId)
+        .update({ order_status: "cancelled", payment_status: "refunded" })
+        .eq("id", selectedOrderId)
         .eq("order_status", "pending");
 
       if (error) throw error;
 
       toast({
         title: "Order Cancelled",
-        description: "Your order has been cancelled successfully",
+        description: `Your order has been cancelled successfully. Refund of ₹${selectedOrderAmount} will be processed within 3-5 business days.`,
       });
+
+      setCancelDialogOpen(false);
+      setSelectedOrderId(null);
 
       // Reload orders
       if (user) {
@@ -96,7 +111,7 @@ export default function OrderHistory() {
       console.error("Error cancelling order:", error);
       toast({
         title: "Error",
-        description: "Failed to cancel order. Only pending orders can be cancelled.",
+        description: "Failed to cancel order. Please try again or contact support.",
         variant: "destructive",
       });
     }
@@ -137,8 +152,15 @@ export default function OrderHistory() {
   }
 
   return (
-    <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8">Order History</h1>
+    <>
+      <CancelOrderDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        onConfirm={cancelOrder}
+        orderAmount={selectedOrderAmount}
+      />
+      <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8">Order History</h1>
 
       <div className="space-y-6">
         {orders.map((order) => (
@@ -240,7 +262,7 @@ export default function OrderHistory() {
                 {order.order_status === "pending" && (
                   <Button
                     variant="destructive"
-                    onClick={() => cancelOrder(order.id)}
+                    onClick={() => handleCancelClick(order.id, order.total)}
                     className="w-full sm:w-auto"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -253,5 +275,6 @@ export default function OrderHistory() {
         ))}
       </div>
     </div>
+    </>
   );
 }

@@ -20,13 +20,14 @@ export default function Wishlist() {
   }, []);
 
   const checkUser = async () => {
+    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate("/auth");
       return;
     }
     setUser(user);
-    fetchWishlist(user.id);
+    await fetchWishlist(user.id);
   };
 
   const fetchWishlist = async (userId: string) => {

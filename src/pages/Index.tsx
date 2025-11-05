@@ -9,9 +9,9 @@ import { ComboOfferBanner } from "@/components/ComboOfferBanner";
 import { BottomBannerCarousel } from "@/components/BottomBannerCarousel";
 import { ArrowRight, TrendingUp, Zap, Shield } from "lucide-react";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
-import menImg from "@/assets/hero-1.jpg";
-import womenImg from "@/assets/hero-2.jpg";
-import kidsImg from "@/assets/hero-3.jpg";
+import categoryMenImg from "@/assets/category-men.jpg";
+import categoryWomenImg from "@/assets/category-women.jpg";
+import categoryKidsImg from "@/assets/category-kids.jpg";
 import tshirtImg from "@/assets/products/tshirt-teal-1.jpg";
 import trackpantsImg from "@/assets/products/trackpants-black-1.jpg";
 import shortsImg from "@/assets/products/shorts-khaki-1.jpg";
@@ -58,24 +58,22 @@ export default function Index() {
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
           <CategoryCard
-            title="Men"
-            description="Explore our premium men's collection"
-            image={menImg}
-            link="/products?category=t-shirts"
-          />
-          <CategorySmallCard
-            title="Women"
-            price="Coming Soon"
-            image={womenImg}
+            title="Men's Collection"
+            description="Explore our premium range of t-shirts, track pants, and shorts designed for modern men"
+            image={categoryMenImg}
             link="/products"
-            disabled
           />
-          <CategorySmallCard
-            title="Kids"
-            price="Coming Soon"
-            image={kidsImg}
-            link="/products"
-            disabled
+          <CategoryCard
+            title="Women's Collection"
+            description="Stylish and comfortable designs for women"
+            image={categoryWomenImg}
+            comingSoon={true}
+          />
+          <CategoryCard
+            title="Kids' Collection"
+            description="Fun and comfortable styles for kids"
+            image={categoryKidsImg}
+            comingSoon={true}
           />
         </div>
       </section>

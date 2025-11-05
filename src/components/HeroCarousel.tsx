@@ -4,10 +4,18 @@ import { Button } from "@/components/ui/button";
 import hero1 from "@/assets/hero-premium-tees.jpg";
 import hero2 from "@/assets/hero-2.jpg";
 import hero3 from "@/assets/hero-3.jpg";
+import comboOfferImg from "@/assets/combo-offer-banner.jpg";
 import { Link } from "react-router-dom";
 import LazyImage from "./LazyImage";
 
 const slides = [
+  {
+    image: comboOfferImg,
+    title: "Combo Offer! 🎉",
+    description: "Buy any 3 T-Shirts for just ₹949 - Save Big!",
+    cta: "Shop T-Shirts Now",
+    link: "/products?category=t-shirts",
+  },
   {
     image: hero1,
     title: "Premium Quality Tees",

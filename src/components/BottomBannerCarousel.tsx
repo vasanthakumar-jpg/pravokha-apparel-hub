@@ -107,23 +107,6 @@ export const BottomBannerCarousel = () => {
         </div>
       ))}
 
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/40"
-        onClick={prevSlide}
-      >
-        <ChevronLeft className="h-6 w-6 text-white" />
-      </Button>
-
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/40"
-        onClick={nextSlide}
-      >
-        <ChevronRight className="h-6 w-6 text-white" />
-      </Button>
 
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {banners.map((_, index) => (
