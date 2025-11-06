@@ -14,9 +14,34 @@ interface CancelOrderDialogProps {
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
   orderAmount: number;
+  paymentStatus: string;
 }
 
-export const CancelOrderDialog = ({ open, onOpenChange, onConfirm, orderAmount }: CancelOrderDialogProps) => {
+export const CancelOrderDialog = ({ open, onOpenChange, onConfirm, orderAmount, paymentStatus }: CancelOrderDialogProps) => {
+  const getPaymentMessage = () => {
+    if (paymentStatus === "completed" || paymentStatus === "success") {
+      return (
+        <>
+          <p className="font-medium text-base">Payment Completed</p>
+          <p>The payment of ₹{orderAmount} will be refunded to your original payment method.</p>
+          <p className="text-sm text-muted-foreground">
+            <strong>Refund Timeline:</strong> 3–5 business days. You'll receive confirmation once processed.
+          </p>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <p className="font-medium text-base">Payment Pending</p>
+          <p>No refund process initiated as payment is still pending.</p>
+          <p className="text-sm text-muted-foreground">
+            If payment completes later, refund timelines (3–5 business days) will be communicated.
+          </p>
+        </>
+      );
+    }
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -24,10 +49,7 @@ export const CancelOrderDialog = ({ open, onOpenChange, onConfirm, orderAmount }
           <AlertDialogTitle>Cancel Order Confirmation</AlertDialogTitle>
           <AlertDialogDescription className="space-y-3">
             <p className="font-medium">Are you sure you want to cancel your order?</p>
-            <p>Upon confirmation, the payment of ₹{orderAmount} will be refunded to your original payment method.</p>
-            <p className="text-sm text-muted-foreground">
-              Please note: Refunds may take 3-5 business days to process and reflect in your account.
-            </p>
+            {getPaymentMessage()}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

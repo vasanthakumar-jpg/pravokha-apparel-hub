@@ -366,7 +366,9 @@ export default function ProductDetail() {
         <Tabs defaultValue="description" className="mt-12">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews ({product.reviews})</TabsTrigger>
+            <TabsTrigger value="reviews">
+              Reviews {product.reviews > 0 && `(${product.reviews})`}
+            </TabsTrigger>
             <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
           </TabsList>
           

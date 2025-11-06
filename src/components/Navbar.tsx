@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Heart, Menu, LogOut, User, X } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
-import { categories } from "@/data/products";
+import { categories, products } from "@/data/products";
 import ThemeToggle from "./ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
 import {
   Sheet,
   SheetContent,
@@ -25,9 +27,11 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [searchResults, setSearchResults] = useState<typeof products>([]);
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -41,13 +45,35 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const filtered = products.filter((p) =>
+        p.title.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query)
+      ).slice(0, 5);
+      setSearchResults(filtered);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
       setSearchOpen(false);
       setSearchQuery("");
+      setSearchResults([]);
     }
+  };
+
+  const handleProductClick = (slug: string) => {
+    navigate(`/product/${slug}`);
+    setSearchOpen(false);
+    setSearchQuery("");
+    setSearchResults([]);
   };
 
   const toggleSearch = () => {
@@ -101,7 +127,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="lg:hidden">
@@ -150,7 +176,12 @@ export default function Navbar() {
             </Sheet>
 
             <Link to="/" className="flex items-center">
-              <img src={logo} alt="PRAVOKHA Logo" className="h-10 w-[160px] md:h-12 md:w-[250px] object-contain" loading="eager" />
+              <img 
+                src={theme === "dark" ? logoDark : logoLight} 
+                alt="PRAVOKHA Logo" 
+                className="h-10 w-[160px] md:h-12 md:w-[250px] object-contain" 
+                loading="eager" 
+              />
             </Link>
           </div>
 
@@ -171,6 +202,24 @@ export default function Navbar() {
             <Link to="/products?category=shorts">
               <Button variant="ghost" size="sm">Shorts</Button>
             </Link>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              disabled 
+              className="opacity-50 cursor-not-allowed"
+              title="Coming Soon"
+            >
+              Women
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              disabled 
+              className="opacity-50 cursor-not-allowed"
+              title="Coming Soon"
+            >
+              Kids
+            </Button>
             <Link to="/support">
               <Button variant="ghost" size="sm">Support</Button>
             </Link>
@@ -186,30 +235,64 @@ export default function Navbar() {
             {/* Search */}
             <div className="relative" ref={searchRef}>
               {searchOpen ? (
-                <form onSubmit={handleSearch} className="flex items-center gap-2 absolute right-0 top-1/2 -translate-y-1/2 bg-background border rounded-lg px-3 py-2 shadow-lg animate-scale-in w-[200px] md:w-[280px] z-50">
-                  <Input
-                    ref={searchInputRef}
-                    type="search"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="border-0 p-0 h-6 focus-visible:ring-0 text-sm"
-                  />
-                  {searchQuery && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => setSearchQuery("")}
-                    >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 z-50">
+                  <form onSubmit={handleSearch} className="flex items-center gap-2 bg-background border rounded-lg px-3 py-2 shadow-lg animate-scale-in w-[250px] md:w-[320px]">
+                    <Input
+                      ref={searchInputRef}
+                      type="search"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="border-0 p-0 h-6 focus-visible:ring-0 text-sm"
+                    />
+                    {searchQuery && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setSearchResults([]);
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={toggleSearch}>
                       <X className="h-4 w-4" />
                     </Button>
+                  </form>
+                  {searchResults.length > 0 && (
+                    <div className="absolute top-full mt-2 w-full bg-background border rounded-lg shadow-lg overflow-hidden animate-scale-in">
+                      <ScrollArea className="max-h-[400px]">
+                        {searchResults.map((product) => (
+                          <button
+                            key={product.id}
+                            onClick={() => handleProductClick(product.slug)}
+                            className="w-full flex items-center gap-3 p-3 hover:bg-muted transition-colors text-left"
+                          >
+                            <img
+                              src={product.variants[0].images[0]}
+                              alt={product.title}
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">{product.title}</p>
+                              <p className="text-xs text-muted-foreground">₹{product.discountPrice || product.price}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </ScrollArea>
+                      <button
+                        onClick={() => handleSearch()}
+                        className="w-full p-2 text-sm text-center text-primary hover:bg-muted border-t"
+                      >
+                        View all results
+                      </button>
+                    </div>
                   )}
-                  <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={toggleSearch}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </form>
+                </div>
               ) : (
                 <Button variant="ghost" size="icon" onClick={toggleSearch}>
                   <Search className="h-5 w-5" />

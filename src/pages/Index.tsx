@@ -29,20 +29,26 @@ export default function Index() {
 
       {/* Shop by Category - Small Cards */}
       <section className="container py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gsap-fade-in">Shop by Category</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 gsap-fade-in">Shop by Category</h2>
+        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+          Discover comfortable and stylish wear for every day. From premium tees to active track pants and versatile shorts - find your perfect fit.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
           <CategorySmallCard
             title="T-Shirts"
+            description="Discover comfortable and stylish tees for every day"
             image={tshirtImg}
             link="/products?category=t-shirts"
           />
           <CategorySmallCard
             title="Track Pants"
+            description="Active wear for workouts and leisure"
             image={trackpantsImg}
             link="/products?category=track-pants"
           />
           <CategorySmallCard
             title="Shorts"
+            description="Perfect fit for all seasons"
             image={shortsImg}
             link="/products?category=shorts"
           />
@@ -113,7 +119,12 @@ export default function Index() {
               </Button>
             </Link>
             <Link to="/learn-more">
-              <Button size="lg" variant="outline" className="hover:scale-105 transition-transform">Learn More</Button>
+              <Button size="lg" variant="outline" className="group hover:scale-105 transition-transform">
+                Learn More
+                <svg className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Button>
             </Link>
           </div>
         </div>
