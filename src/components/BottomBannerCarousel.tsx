@@ -108,15 +108,15 @@ export const BottomBannerCarousel = () => {
       ))}
 
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
         {banners.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            className={`rounded-full transition-all duration-300 ${
               index === currentSlide
-                ? "bg-white w-8"
-                : "bg-white/50 hover:bg-white/70"
+                ? "w-8 h-3 bg-white dark:bg-white"
+                : "w-3 h-3 bg-white/60 dark:bg-white/50 hover:bg-white/80 dark:hover:bg-white/70"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

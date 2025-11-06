@@ -127,7 +127,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="lg:hidden">
@@ -148,6 +148,22 @@ export default function Navbar() {
                         <Button variant="ghost" className="w-full justify-start">{category.name}</Button>
                       </Link>
                     ))}
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start opacity-50 cursor-not-allowed"
+                      disabled
+                      title="Coming Soon"
+                    >
+                      Women
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start opacity-50 cursor-not-allowed"
+                      disabled
+                      title="Coming Soon"
+                    >
+                      Kids
+                    </Button>
                     <Link to="/support" onClick={closeMobileMenu}>
                       <Button variant="ghost" className="w-full justify-start">Support</Button>
                     </Link>
@@ -175,7 +191,7 @@ export default function Navbar() {
               </SheetContent>
             </Sheet>
 
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center -ml-1">
               <img 
                 src={theme === "dark" ? logoDark : logoLight} 
                 alt="PRAVOKHA Logo" 

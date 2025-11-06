@@ -28,12 +28,12 @@ export default function Index() {
       <HeroCarousel />
 
       {/* Shop by Category - Small Cards */}
-      <section className="container py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 gsap-fade-in">Shop by Category</h2>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+      <section className="container py-20">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 gsap-fade-in">Shop by Category</h2>
+        <p className="text-center text-muted-foreground mb-16 max-w-2xl mx-auto text-lg">
           Discover comfortable and stylish wear for every day. From premium tees to active track pants and versatile shorts - find your perfect fit.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mb-12 max-w-6xl mx-auto">
           <CategorySmallCard
             title="T-Shirts"
             description="Discover comfortable and stylish tees for every day"
@@ -54,7 +54,7 @@ export default function Index() {
           />
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
           <CategoryCard
             title="Men's Collection"
             description="Explore our premium range of t-shirts, track pants, and shorts designed for modern men"
@@ -77,8 +77,8 @@ export default function Index() {
       </section>
 
       {/* Features */}
-      <section className="container py-16 bg-muted/30">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="container py-20 bg-muted/30">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <Card className="p-6 text-center hover:shadow-xl transition-all duration-300 gsap-scale-in group">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
             <h3 className="text-xl font-semibold mb-2">Latest Trends</h3>
@@ -98,8 +98,8 @@ export default function Index() {
       </section>
 
       {/* Bottom Banner Carousel */}
-      <section className="container py-8">
-        <div className="gsap-fade-in">
+      <section className="container py-16">
+        <div className="gsap-fade-in max-w-6xl mx-auto">
           <BottomBannerCarousel />
         </div>
       </section>

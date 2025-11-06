@@ -117,15 +117,15 @@ export default function HeroCarousel() {
       ))}
 
       {/* Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2 rounded-full transition-all ${
+            className={`rounded-full transition-all duration-300 ${
               index === currentSlide
-                ? "w-8 bg-background"
-                : "w-2 bg-background/50 hover:bg-background/70"
+                ? "w-8 h-3 bg-background dark:bg-white"
+                : "w-3 h-3 bg-background/50 dark:bg-white/50 hover:bg-background/70 dark:hover:bg-white/70"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

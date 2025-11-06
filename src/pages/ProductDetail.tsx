@@ -4,14 +4,14 @@ import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
-import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft, ZoomIn, RotateCw } from "lucide-react";
+import { Star, Truck, RefreshCw, Shield, Heart, Minus, Plus, ChevronLeft, ZoomIn } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
-import ProductView360 from "@/components/ProductView360";
+
 import { ProductReviews } from "@/components/ProductReviews";
 import { ReviewStatistics } from "@/components/ReviewStatistics";
 import LazyImage from "@/components/LazyImage";
@@ -31,7 +31,6 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(0);
   const [mainImage, setMainImage] = useState(0);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
-  const [view360Open, setView360Open] = useState(false);
 
   if (!product || !selectedVariant) {
     return <Navigate to="/products" replace />;
@@ -126,15 +125,6 @@ export default function ProductDetail() {
                 >
                   <ZoomIn className="h-4 w-4 mr-2 hover:rotate-90 transition-transform duration-300" />
                   Zoom
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="hover:scale-105 transition-transform"
-                  onClick={() => setView360Open(true)}
-                >
-                  <RotateCw className="h-4 w-4 mr-2 hover:rotate-180 transition-transform duration-300" />
-                  360° View
                 </Button>
               </div>
             </div>
@@ -467,12 +457,6 @@ export default function ProductDetail() {
         currentIndex={mainImage}
         open={imageViewerOpen}
         onClose={() => setImageViewerOpen(false)}
-      />
-
-      <ProductView360
-        images={selectedVariant.images}
-        open={view360Open}
-        onClose={() => setView360Open(false)}
       />
     </div>
   );
