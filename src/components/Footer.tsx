@@ -6,12 +6,18 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { useTheme } from "next-themes";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
+import TrustBadges from "./TrustBadges";
+import PaymentIcons from "./PaymentIcons";
 
 const emailSchema = z.string().email("Invalid email address");
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { theme } = useTheme();
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,13 +69,19 @@ export default function Footer() {
 
   return (
     <footer className="bg-card border-t mt-auto">
+      <div className="container">
+        <TrustBadges />
+      </div>
+      
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Pravokha
-            </h3>
+            <img 
+              src={theme === 'dark' ? logoDark : logoLight} 
+              alt="PRAVOKHA" 
+              className="h-12 w-auto object-contain"
+            />
             <p className="text-sm text-muted-foreground">
               Premium fashion for the modern lifestyle. Quality fabrics, trendy designs, and unbeatable comfort.
             </p>
@@ -180,15 +192,8 @@ export default function Footer() {
                 <Mail className="h-4 w-4" />
               </Button>
             </form>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-success"></span>
-                Secure Payments
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-success"></span>
-                Easy Returns
-              </span>
+            <div className="mt-4">
+              <PaymentIcons />
             </div>
           </div>
         </div>

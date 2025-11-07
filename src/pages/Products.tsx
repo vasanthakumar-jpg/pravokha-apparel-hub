@@ -168,18 +168,18 @@ export default function Products() {
               </SelectContent>
             </Select>
 
-            {/* Mobile Filter */}
+            {/* Mobile Filter - Bottom Drawer */}
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="lg:hidden">
                   <Filter className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80">
+              <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
                 <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
+                  <SheetTitle className="text-lg font-bold">Filters</SheetTitle>
                 </SheetHeader>
-                <div className="mt-6">
+                <div className="mt-6 overflow-y-auto max-h-[calc(85vh-120px)] pb-4">
                   <FilterContent isDesktop={false} />
                 </div>
               </SheetContent>

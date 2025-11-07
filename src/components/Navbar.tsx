@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Heart, Menu, LogOut, User, X } from "lucide-react";
 import logoLight from "@/assets/logo-light.png";
@@ -12,6 +12,8 @@ import ThemeToggle from "./ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
+import { debounce } from "@/utils/debounce";
+import LazyImage from "./LazyImage";
 import {
   Sheet,
   SheetContent,
@@ -45,19 +47,25 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      if (query.trim()) {
+        const filtered = products.filter((p) =>
+          p.title.toLowerCase().includes(query.toLowerCase()) ||
+          p.description.toLowerCase().includes(query.toLowerCase()) ||
+          p.category.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 5);
+        setSearchResults(filtered);
+      } else {
+        setSearchResults([]);
+      }
+    }, 300),
+    []
+  );
+
   useEffect(() => {
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      const filtered = products.filter((p) =>
-        p.title.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query)
-      ).slice(0, 5);
-      setSearchResults(filtered);
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchQuery]);
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -288,7 +296,7 @@ export default function Navbar() {
                             onClick={() => handleProductClick(product.slug)}
                             className="w-full flex items-center gap-3 p-3 hover:bg-muted transition-colors text-left"
                           >
-                            <img
+                            <LazyImage
                               src={product.variants[0].images[0]}
                               alt={product.title}
                               className="w-12 h-12 object-cover rounded"

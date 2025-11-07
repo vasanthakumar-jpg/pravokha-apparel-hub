@@ -9,20 +9,21 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import ProductCard from "@/components/ProductCard";
 import ImageViewer from "@/components/ImageViewer";
-
+import RelatedProducts from "@/components/RelatedProducts";
 import { ProductReviews } from "@/components/ProductReviews";
 import { ReviewStatistics } from "@/components/ReviewStatistics";
 import LazyImage from "@/components/LazyImage";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
 import { supabase } from "@/integrations/supabase/client";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const product = products.find((p) => p.slug === slug);
   const { addToCart } = useCart();
+  const { addToRecentlyViewed } = useRecentlyViewed();
 
   useGsapAnimations();
 
@@ -31,6 +32,12 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(0);
   const [mainImage, setMainImage] = useState(0);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  
+  useEffect(() => {
+    if (product) {
+      addToRecentlyViewed(product);
+    }
+  }, [product]);
 
   if (!product || !selectedVariant) {
     return <Navigate to="/products" replace />;
@@ -90,7 +97,7 @@ export default function ProductDetail() {
 
   const relatedProducts = products
     .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+    .slice(0, 8);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -440,16 +447,11 @@ export default function ProductDetail() {
         </Tabs>
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-6 gsap-fade-in">You May Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {relatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Related Products */}
+        <RelatedProducts 
+          products={relatedProducts} 
+          title="You May Also Like"
+        />
       </div>
 
       <ImageViewer

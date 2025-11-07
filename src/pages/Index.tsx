@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import HeroCarousel from "@/components/HeroCarousel";
+import ProductCard from "@/components/ProductCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { CategorySmallCard } from "@/components/CategorySmallCard";
-import { ComboOfferBanner } from "@/components/ComboOfferBanner";
 import { BottomBannerCarousel } from "@/components/BottomBannerCarousel";
-import { ArrowRight, TrendingUp, Zap, Shield } from "lucide-react";
+import RecentlyViewed from "@/components/RecentlyViewed";
+import { products } from "@/data/products";
 import { useGsapAnimations } from "@/hooks/useGsapAnimations";
+import { ArrowRight, TrendingUp, Zap, Shield } from "lucide-react";
 import categoryMenImg from "@/assets/category-men.jpg";
 import categoryWomenImg from "@/assets/category-women.jpg";
 import categoryKidsImg from "@/assets/category-kids.jpg";
@@ -18,6 +20,9 @@ import shortsImg from "@/assets/category-shorts.jpg";
 
 export default function Index() {
   useGsapAnimations();
+  
+  const featuredProducts = products.filter(p => p.featured).slice(0, 8);
+  const newArrivals = products.filter(p => p.newArrival).slice(0, 8);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -75,6 +80,57 @@ export default function Index() {
           />
         </div>
       </section>
+
+      {/* Featured Products */}
+      <section className="container py-16">
+        <div className="text-center mb-12 gsap-fade-in">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">Featured Collection</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Discover our handpicked selection of premium t-shirts, track pants, and shorts
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 gsap-scale-in">
+          {featuredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          <Link to="/products">
+            <Button size="lg" variant="outline" className="group">
+              View All Products
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="py-16 bg-muted/30">
+        <div className="container">
+          <div className="text-center mb-12 gsap-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">New Arrivals</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Check out the latest additions to our collection
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 gsap-scale-in">
+            {newArrivals.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <Link to="/products">
+              <Button size="lg" variant="outline" className="group">
+                Explore New Arrivals
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Recently Viewed */}
+      <RecentlyViewed />
 
       {/* Features */}
       <section className="container py-20 bg-muted/30">
